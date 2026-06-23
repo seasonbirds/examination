@@ -1,0 +1,41 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" id="checkboxAll" value="0" onclick="selectForAll(this)"/></th>
+			<th>序号</th>
+		<th>&nbsp;资源名(功能权限名)</th>
+		<th>&nbsp;资源状态</th>
+		<th>&nbsp;系统功能URL</th>
+		<th>&nbsp;操作类型编码，用于控制操作类型按钮的出现。
+有编码的记录必须唯一。</th>
+		<th>&nbsp;备注</th>
+
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==0>class="even"</#if>>
+			<td>&nbsp;<input name="checkbox${item.id}"  value="${item.id}" type="checkbox" onclick="selectOne(this)"/></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+		<td>&nbsp;<#if item.name??>${item.name}</#if></td>
+		<td>&nbsp;<#if item.status??>${item.status}</#if></td>
+		<td>&nbsp;<#if item.url??>${item.url}</#if></td>
+		<td>&nbsp;<#if item.code??>${item.code}</#if></td>
+		<td>&nbsp;<#if item.memo??>${item.memo}</#if></td>
+
+			<td><a class="f_tblist_show"  href="core/major/major-show.html"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a class="f_tblist_edit"  href="core/major/major-input.html"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="f_single_delete" href="${webroot}/sysRight!remove.action?sysRight.id=${item.id}"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="10"/>
+	</tbody>	
+</table>
+
+
+

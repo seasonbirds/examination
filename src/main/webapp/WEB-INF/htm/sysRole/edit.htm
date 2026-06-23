@@ -1,0 +1,94 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<form id="tb_input" method="post" action="${webroot}/sysRole!save.action">
+<div class="input_box" style="width:800px">
+	<div class="box_title">角色</div>
+	<div class="box_content">
+		<input type="hidden" name="sysRole.id" id="sysRole.id" value="<#if sysRole.id??>${sysRole.id?c!0}</#if>">
+		<table class="tb_input" >
+			<tbody>
+				<tr>
+					<th >名称<strong class="red">*</strong></th>
+					<td><input type="text" name="sysRole.name" value="<#if sysRole.name??>${sysRole.name!}</#if>"></td>
+				</tr>
+				<tr>
+					<th >父节点ID</th>
+					<td><input type="text" name="sysRole.parentId" value="<#if sysRole.parentId??>${sysRole.parentId?c!0}</#if>"></td>
+				</tr>
+				<tr>
+					<th >描述</th>
+					<td><input type="text" name="sysRole.description" value="<#if sysRole.description??>${sysRole.description!}</#if>"></td>
+				</tr>
+				<tr>
+					<th >状态<strong class="red">*</strong></th>
+					<td>
+						<#if sysRole.status??>
+							<@enum.radio id="sysRole.status" type="com.vnetoo.common.enums.Enabled" default="${sysRole.status}"/>
+						<#else>
+							<@enum.radio id="sysRole.status" type="com.vnetoo.common.enums.Enabled" default="UNUSED"/>
+						</#if>
+						
+					</td>
+				</tr>
+			
+			</tbody>
+		</table>
+	</div>
+	<div class="box_foot">
+		<div class="box_foot_buttons">
+			<a class="bt_green f_wait" id="input_submit" href="javascript:void(0)" onclick="submitSysRole()">保 存</a>
+			<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">取 消</a>	
+		</div>
+	</div>
+</div>
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+	$(".f_item").find("input[type='text']").change(function(){
+		if($(this).attr("class").indexOf("filedError") > -1){
+			$(this).removeClass("filedError");
+		}
+	});
+	$("#tb_input").validate({
+		rules:{
+			"sysRole.name":{
+				required:true
+			},
+			"sysRole.parentId":{
+				digits:true,min:0
+			},
+			"sysRole.status":{
+				required:true
+			}
+		},
+		messages:{
+			"sysRole.name":{
+				required:"请输入名称"
+			},
+			"sysRole.parentId":{
+				digits:"父节点ID必须为整数",min:"父节点ID不能小于0"
+			},
+			"sysRole.status":{
+				required:"请输入状态"
+			}
+		}
+	});
+});
+function submitSysRole(){
+	if (!$("#tb_input").valid()) {
+		return false;
+	}
+	//alert($('#tb_input').attr("action")+"|||"+$('#tb_input').formSerialize());
+	$.post($('#tb_input').attr("action"), $('#tb_input').formSerialize(), function(response){
+			if(response.result==0){
+				$.colorbox.close();
+				jAlert('添加角色成功！',function(){pageQuery()});
+			}
+			else{
+				jAlertError('添加角色失败！'+response.msg);
+			}
+	},"json");
+	
+}
+</script>

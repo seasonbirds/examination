@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ScopeKeyPointRel">
+	
+	<resultMap id="result" type="ScopeKeyPointRel">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="keyPointId" column="KEYPOINT_ID" jdbcType="NUMERIC"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="ScopeKeyPointRel">
+	    <![CDATA[
+			INSERT INTO EXAM_SCOPE_KEYPOINT_REL(
+				SCOPE_ID,
+				KEYPOINT_ID
+			)VALUES(
+				#{scopeId,jdbcType=NUMERIC},
+				#{keyPointId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<delete id="deleteRel" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_SCOPE_KEYPOINT_REL WHERE SCOPE_ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectList" parameterType="ScopeKeyPointRel"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_SCOPE_KEYPOINT_REL
+			WHERE	
+				1=1	
+		]]>
+		<if test="scopeId!=null" >
+			AND SCOPE_ID=#{scopeId}
+		</if>
+		<if test="keyPointId!=null" >
+			AND KEYPOINT_ID=#{keyPointId}
+		</if>				
+	</select>
+	
+	<select id="getKeyPointIdListByScopeId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT 
+				KEYPOINT_ID
+			FROM 
+				EXAM_SCOPE_KEYPOINT_REL
+			WHERE	
+				SCOPE_ID=#{scopeId}
+		]]>
+	</select>
+	
+</mapper>
+
+
+

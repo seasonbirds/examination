@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>::厦门大学网络教育管理系统::</title>
+<link rel="stylesheet" type="text/css" href="${webroot}/css/colorbox.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/css/common.css" />
+<link rel="stylesheet" type="text/css"  href="${webroot}/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/css/multi-transfer.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/js/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="${webroot}/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${webroot}/js/ddaccordion.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-zh.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${webroot}/js/common.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.tip.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.wordLimit.js"></script>
+<script type="text/javascript" src="${webroot}/js/multi-transfer.js"></script>
+<script type="text/javascript" src="${webroot}/js/paginator.js"></script>	
+<script type="text/javascript" src="${webroot}/js/jconfirmaction.jquery.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.form.js"></script>
+<script type="text/javascript" src="${webroot}/js/ztree/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="${webroot}/js/datePicker/zh_WdatePicker.js"></script>
+<script type="text/javascript" src="${webroot}/js/examPolicy.js"></script>
+<script type="text/javascript" src="${webroot}/js/waitbar.js"></script>
+
+<link rel="stylesheet" type="text/css" href="${webroot}/js/jAlert/jquery.alerts.css" />
+<script type="text/javascript" src="${webroot}/js/jAlert/jquery.alerts.js"></script>
+
+
+<script type="text/javascript">
+ddaccordion.init({
+	headerclass: "submenuheader", //Shared CSS class name of headers group
+	contentclass: "submenu", //Shared CSS class name of contents group
+	revealtype: "click", //Reveal content when user clicks or onmouseover the header? Valid value: "click", "clickgo", or "mouseover" 
+	mouseoverdelay: 200, //if revealtype="mouseover", set delay in milliseconds before header expands onMouseover
+	collapseprev: true, //Collapse previous content (so only one open at any time)? true/false 
+	defaultexpanded: [0], //index of content(s) open by default [index1, index2, etc] [] denotes no content
+	onemustopen: false, //Specify whether at least one header should be open always (so never all headers closed)
+	animatedefault: false, //Should contents open by default be animated into view?
+  scrolltoheader: false, //scroll to header each time after it's been expanded by the user?
+	persiststate: true, //persist state of opened contents within browser session?
+	toggleclass: ["", ""], //Two CSS classes to be applied to the header when it's collapsed and expanded, respectively ["class1", "class2"]
+	togglehtml: ["suffix", "<img src='${webroot}/img/sidebar/plus.gif' class='statusicon' />", "<img src='${webroot}/img/sidebar/minus.gif' class='statusicon' />"], //Additional HTML added to the header when it's collapsed and expanded, respectively  ["position", "html1", "html2"] (see docs)
+	animatespeed: "fast", //speed of animation: integer in milliseconds (ie: 200), or keywords "fast", "normal", or "slow"
+	oninit:function(headers, expandedindices){ //custom code to run when headers have initalized
+		//do nothing
+	},
+	onopenclose:function(header, index, state, isuseractivated){ //custom code to run whenever a header is opened or closed
+		reset_left_content_height();//在common.js定义
+	}
+});
+</script>
+<script type="text/javascript">
+	function loadMain(me) {
+		$('#sidebarmenu .submenu li').removeClass('active');
+		$(me).parent().addClass('active');
+		//var breadcrumb1 = $('#menu .current').html();
+		var breadcrumb2 = $(me).parents('.submenu').prev().find('span.submenuTitle').eq(0).html();
+		var breadcrumb3 = $(me).html();
+		//$('#right_title_context span').empty().append(breadcrumb1 + ' / ' + breadcrumb2 + ' / ' + breadcrumb3);
+		$('#right_title_context span').empty().append(breadcrumb2 + ' / ' + breadcrumb3);
+	
+		// 加载子页面
+		//var url = $(me).attr('href') + ' #main > *';
+		var url = $(me).attr('href')
+		$('#right_content').load(url,function() {
+			reset_left_content_height();//在common.js定义
+		});
+		return false;
+  	}
+
+	$(document).ready(function() {
+		//loadMain($('#sidebarmenu .submenu li.active > a'));
+		$('#sidebarmenu .submenu li>a').click(function () {
+		  return loadMain(this);
+		});
+
+		//错误提示关闭按钮
+		//$('#right_content').on('click','.notice .close',function(){
+		//	$(this).parent().remove();	
+		//});
+		
+		//窗口变化事件
+		$(window).bind("resize",reset_left_content_height);
+		//添加参数
+		$(".f_profile_edit").each(function() {
+			var url = $(this).attr('href');
+			url=append_ajax_true(url);
+			$(this).attr('href',url);		
+		});
+	
+		//点击个人信息和个人密码
+		//$('.f_profile_edit').colorbox();
+	});
+
+
+</script>
+<!--
+<script language="javascript" type="text/javascript" src="niceforms.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="${webroot}/css/niceforms-default.css" />
+-->
+<style type="text/css">
+
+/* 登陆欢迎模块样式 start */
+.login-details {
+width: 193px; padding:5px 0;
+background-color: #ecf8fd;
+margin: 8px 0px;
+border: #bed5df solid 1px;
+}
+.welcome {
+width: 173px;
+padding:5px 10px;
+border-bottom: 1px #7cbdd7 dashed;
+font-weight:bold; font-size:14px;
+}
+.welcome img{ margin-right:5px}
+.newmessage {
+width: 173px;padding:10px;
+background-color: #dcf2fb;
+border-bottom: 1px #7cbdd7 dashed;
+display:inline-block;
+}
+ul.newmessage li {
+line-height: 24px;
+}
+ul.newmessage li span {
+color: #ffa200;
+font-weight: bold;
+padding: 0 3px;
+}
+.welcomebutton {
+	padding:10px 5px;
+}
+.welcomebutton a{
+	position:relative; display:inline-block; width:80px; margin-left:10px;
+}
+.welcomebutton a img{
+	margin-left:5px; position:absolute; top:1px;
+}
+/* 登陆欢迎模块样式 end */
+
+/******新通知begin*****/
+.news_two {
+width: 100%;
+float: left;
+margin-bottom: 10px;
+}
+.tb_search1 {
+width: 49.5%;
+background-color: #bed5df;
+float: left;
+overflow: hidden;
+zoom: 1;
+border-collapse: collapse;
+border: #bed5df solid 1px;
+}
+.tb_search {
+width: 49.5%;
+background-color: #bed5df;
+float: right;
+overflow: hidden;
+zoom: 1;
+border-collapse: collapse;
+border: #bed5df solid 1px;
+}
+.tbs_text2 {
+height: 25px;
+width: 15%;
+background-color: #F7F7F7;
+text-align: center;
+color: #256c89;
+font-weight: bold;
+}
+.tbs_textr2 {
+height: 25px;
+background-color: #FFFFFF;
+text-align: center;
+}
+/******新通知end*****/
+
+/******首页常用功能图标begin*****/
+.commonbutton {
+float: left;
+width: 100%;
+border: #bed5df solid 1px;
+}
+.commontitle {
+width: 100%;
+height: 34px;
+background: url(${webroot}/img/images/cygn_03.png) no-repeat;
+}
+.commonbutton ul li{ float:left; width:16.5%; margin:30px 0; border-right:#ddd dotted 1px}
+.commonbutton ul li a{ font-size:14px; font-weight:bold; text-align:center; display:block}
+.commonbutton ul li.last_li{ border:0}
+/******首页常用功能图标end*****/
+/*********等待提示开始************/
+.waitdiv {CURSOR:wait;BORDER-RIGHT: 0px ridge; BORDER-TOP: 0px ridge; Z-INDEX: 99999; LEFT: 250px; display:none;text-align:bottom;
+	BORDER-LEFT: 0px ridge; WIDTH: 363px; PADDING-TOP: 0px; BORDER-BOTTOM: 0px ridge; POSITION: absolute; TOP: 200px; HEIGHT: 215px; }
+table.waitbar {background: url(${webroot}/img/loading2.gif) no-repeat; height:100px;width:352px; text-align:bottom;
+	background-position: center;background-attachment: fixed;}
+.fonthightLight{width:200px;background-color: #ffffff;opacity:1;!important;filter:alpha(opacity=100);}
+/**********等待提示结束***********/
+
+</style>
+</head>
+<body>
+<iframe id="WaitBarFrm" style="position:absolute;left:0px;top:0px;width:100px;height:100px;display:none;z-index:10000;opacity:0.5;!important;filter:alpha(opacity=50);
+	background-color:#00000A;" frameBorder="0"></iframe>
+<div id="WaitBar" class="waitdiv" >
+	<center>
+		<table class="waitbar">
+			<tr >
+				<td></td>				
+			</tr>
+		</table>
+		<div ><div class="fonthightLight">处理中，请稍等...</div></div>
+	</center>
+</div>
+<div id="main_container"> 
+	<!--头部begin-->
+	<div id="header">
+		<div class="logo"></div>
+		<div id="header_right">
+			<div id="header_welcome">欢迎您， <#if user.realName??>${user.realName}<#else>${user.acct}</#if>&nbsp;&nbsp;&nbsp;&nbsp; <a onclick="return confirm('提示：您确定要退出系统吗？')" href='${webServer}/vnetoo-cas/logout?service=${webServer}/examination' class="logout">退出</a></div>
+		</div>
+	</div>
+	<!--头部end-->
+	
+	<div id="main_content">
+		
+		<div id="content"> 
+			
+			<!--左边begin-->
+			<div id="left_content"> 
+				
+				<!--左边常用功能begin-->
+				<div id="sidebarmenu"> <a class="menuitem submenuheader"><img src="${webroot}/img/icon/icon_27.png" width="13" height="11" border=0 /><span class="submenuTitle">常用功能</span></a>
+					<div class="submenu">
+						<ul>
+							<li id="submenu_li_0"><a href="examKeyPoint!pickup.action">知识点管理</a></li> 
+							<li id="submenu_li_1"><a href="examQuestion!search.action">题库管理</a></li>							
+							<li><a href="specialExamAction!search.action?appScope.type=SIMULATION">模拟考试管理</a></li>
+							<li><a href="specialExamAction!search.action?appScope.type=ENROL">入学考试管理</a></li>
+							<li id="submenu_li_1"><a href="examMonitor!search.action">考试监控</a></li>
+							<li id="submenu_li_1"><a href="examReview!search.action">阅卷管理</a></li>
+							<li id="submenu_li_1"><a href="scoreManage!search.action">成绩管理</a></li>		
+							<li><a href="appScope!search.action">考试管理（测试）</a></li>
+							<!--
+							<li><a href="sysRole!search.action">角色管理</a></li>	
+							<li><a href="sysUser!list.action">用户管理</a></li>	
+							<li><a href="sysRight!list.action">菜单管理</a></li>	
+							-->				
+						</ul>
+					</div>
+				</div>
+				<!--左边常用功能end--> 
+			</div>
+			<!--左边end--> 
+			
+			<!--右边begin-->
+			<div id="right_title">
+				<div id="right_title_context"><span>首 页 </span></div>
+				<div id="right_title_message">
+					<marquee dir='left'  scrolldelay=150 onmouseover=this.stop() onmouseout=this.start()>
+					
+					</marquee>
+				</div>
+			</div>
+			<div id="right_content"> 
+			</div>
+			<!--右边end--> 
+		</div>
+		<div class="clear"></div>
+	</div>
+	<!--end of main content--> 
+	
+</div>
+</body>
+</html>

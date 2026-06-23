@@ -1,0 +1,138 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/specialExamAction!query.action">
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>考试名称：</th>
+				<td>&nbsp;<input type="text" id="appScope.name" name="appScope.name"/></td>
+				<th><div style="visibility:hidden">考试类型：</div></th>
+				<td>&nbsp;<div style="visibility:hidden"><select id="appScope.type" name="appScope.type"><option value='${appScope.type!}'>${resourceBundle('QuestionRangeType.${appScope.type!}')}</option></select></div></td>
+			</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	考试列表
+	<span class="operate_list"> 
+		<a class="bt_blue_30 f_add_operate" href="javascript:void(0);" onclick="showSpecialExamDialog('add')">添加</a>
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a> 
+	</span>	
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "list.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+<SCRIPT LANGUAGE="JavaScript">
+function assemblePaper(url){
+	var moduleName = $('#moduleName').val();
+	if(moduleName != undefined && moduleName != null && moduleName != ""){
+		$('#rightContent').load(url);
+	}else{
+		$('#right_content').load(url,function(){
+			reset_left_content_height();//在common.js定义
+		});
+	}
+}
+
+function showSpecialExamDialog(type, id){
+	if(type != "show" && type != "add" && type != "edit"){
+		return;
+	}
+	
+	var examType = $("#appScope\\.type").val();
+	var url = "specialExamAction!toCreateOrUpdate.action?dialogType=" + type + "&appScope.type=" + examType;
+	if(id != undefined && id != null){
+		url += "&appScope.id=" + id;
+	}
+	$.colorbox({
+		href:url
+	});
+}
+
+function showSpecialPolicy(policyId,id){
+	var queryString = "examPolicy.examType=" + $("#appScope\\.type").val();
+	queryString += "&examPolicy.scopeId=" + id;
+	if(policyId == undefined || policyId == null || policyId <= 0){
+		queryString += "&dialogType=add";
+	}else{
+		queryString += "&dialogType=edit" + "&examPolicy.id=" + policyId;
+	}
+
+	var url = "examPolicy!toCreateOrUpdate.action?" + queryString;
+	$.colorbox({
+		href:url
+	});
+}
+
+function showSpecialPaper(obj,paperId){
+	if(paperId == undefined || paperId == null || paperId <= 0){
+		$(obj).tip({content:"请先从策略设置页面生成试卷"});
+	}else{
+		$(obj).jConfirmAction({
+			question: "请选择你要的操作",
+			yesAnswer: "查看",
+			cancelAnswer: "导出",
+			yesAction:function(){$.colorbox({href:"examPaper!details.action?examPaper.id=" + paperId});},
+			cancelAction:function(){window.location.href = "examPaper!batchDownloadPaper.action?examPaper.ids="+paperId;}
+		});
+	}
+}
+
+$(function(){
+	$('.f_batch_delete').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要操作的数据"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+		}		
+	});
+	$('.f_batch_delete').jConfirmAction({
+		question:"确定删除选中的 记录吗？",
+		yesAnswer:"是",cancelAnswer:"否",
+		yesAction:function($this){
+			jQueryPost("${webroot}/appScope!batchRemove.action",{
+				"appScope.ids":selectList.getData()
+				},
+				function(result,msg){
+					if(result==0){
+						jAlert("删除考试成功！");				
+						pageQuery();						
+					}else{
+						jAlertError("删除考试失败！");
+					}
+			});	
+		}
+	});
+})
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

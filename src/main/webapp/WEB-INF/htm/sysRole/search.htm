@@ -1,0 +1,93 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/sysRole!query.action">
+<table class="tb_query">
+	<tbody>
+		<tr>
+			<th>名称：</th>
+			<td>&nbsp;<input type="text" id="sysRole.name" name="sysRole.name"/></td>
+		
+			<th>状态：</th>
+			<td>&nbsp;<@enum.checkbox id="sysRole.statusForQuery" type="com.vnetoo.common.enums.Enabled" default=""/></td>
+		</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"/>
+
+<table class="tblist f_tblist">
+	<caption>
+	角色列表
+	<span class="operate_list"> 
+		<a class="bt_blue_30 f_add_operate" href="${webroot}/sysRole!toCreateOrUpdate.action">添加</a>
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a>
+	</span>
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "list.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+	
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+
+$(function(){
+	$('.f_add_operate').colorbox();
+	$('.f_tblist_edit').colorbox();
+	$('.f_tblist_show').colorbox();
+	
+	$('.f_batch_delete').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要操作的数据"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+		}		
+	});
+	$('.f_batch_delete').jConfirmAction({
+			question:"确定删除选中的 记录吗？",
+			yesAnswer:"是",cancelAnswer:"否",
+			yesAction:function($this){
+				jQueryPost("${webroot}/sysRole!batchRemove.action",{
+					"sysRole.ids":selectList.getData()
+					},
+					function(result,msg){
+						if(result==0){
+							pageQuery();						
+							jAlert("删除角色成功！");				
+						}else{
+							jAlertError("删除角色失败！"+msg);
+						}
+				});	
+			}
+	});
+});
+
+//-->
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

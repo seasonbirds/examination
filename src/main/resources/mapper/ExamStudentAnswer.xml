@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamStudentAnswer">
+	
+	<resultMap id="result" type="ExamStudentAnswer">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="studentId" column="STUDENT_ID" jdbcType="NUMERIC"/>
+		<result property="papersId" column="PAPERS_ID" jdbcType="NUMERIC"/>
+		<result property="status" column="STATUS" jdbcType="NUMERIC"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updatedBy" column="UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="answerId" column="ANSWER_ID" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="score" column="SCORE" jdbcType="NUMERIC"/>
+		<result property="reviewStatus" column="REVIEW_STATUS" jdbcType="NUMERIC"/>
+		<result property="businessInfo" column="BUSINESS_INFO" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="ExamStudentAnswer">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_STUDENT_ANSWER.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_STUDENT_ANSWER(
+				ID,
+				STUDENT_ID,
+				PAPERS_ID,
+				STATUS,
+				UPDATE_DATE,
+				UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				ANSWER_ID,
+				SCORE,
+				REVIEW_STATUS,
+				BUSINESS_INFO
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{studentId,jdbcType=NUMERIC},
+				#{papersId,jdbcType=NUMERIC},
+				#{status,jdbcType=NUMERIC},
+				SYSDATE,
+				#{updatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{answerId,jdbcType=BLOB},
+				#{score,jdbcType=NUMERIC},
+				0,
+				#{businessInfo,jdbcType=VARCHAR}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamStudentAnswer">
+		UPDATE EXAM_STUDENT_ANSWER SET UPDATED_BY=#{updatedBy},UPDATE_DATE=SYSDATE
+		<if test="studentId!=null" >
+			,STUDENT_ID=#{studentId}
+		</if>
+		<if test="papersId!=null" >
+			,PAPERS_ID=#{papersId}
+		</if>
+		<if test="status!=null" >
+			,STATUS=#{status}
+		</if>
+		<if test="enabledFlag!=null" >
+			,ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="answerId!=null" >
+			,ANSWER_ID=#{answerId,jdbcType=BLOB}
+		</if>
+		<if test="score!=null" >
+			,SCORE=#{score}
+		</if>
+		<if test="reviewStatus!=null" >
+			,REVIEW_STATUS=#{reviewStatus}
+		</if>
+		<if test="businessInfo!=null" >
+			,BUSINESS_INFO=#{businessInfo}
+		</if>
+		WHERE
+			ID=#{id}
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_STUDENT_ANSWER SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_STUDENT_ANSWER WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_STUDENT_ANSWER
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamStudentAnswer"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_STUDENT_ANSWER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="studentId!=null" >
+			AND STUDENT_ID=#{studentId}
+		</if>
+		<if test="papersId!=null" >
+			AND PAPERS_ID=${papersId}
+		</if>
+		<if test="status!=null" >
+			AND STATUS=${status}
+		</if>
+		<if test="updateDate!=null" >
+			AND UPDATE_DATE=#{updateDate}
+		</if>
+		<if test="updatedBy!=null" >
+			AND UPDATED_BY=#{updatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="answerId!=null" >
+			AND ANSWER_ID=#{answerId}
+		</if>
+		<if test="score!=null" >
+			AND SCORE=#{score}
+		</if>
+		<if test="reviewStatus!=null" >
+			AND REVIEW_STATUS=#{reviewStatus}
+		</if>
+		<if test="businessInfo!=null" >
+			AND BUSINESS_INFO like '%${businessInfo}%'
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="getStudentAnswerByPaperIdAndSId" parameterType="java.util.Map"  resultMap="result">
+		SELECT *
+		FROM 
+			EXAM_STUDENT_ANSWER
+		WHERE
+			ENABLED_FLAG=1
+			AND STUDENT_ID=#{studentId}
+			AND PAPERS_ID in 
+			<foreach item="paperId" index="index" collection="paperIds" open="(" separator="," close=")">
+              		#{paperId}
+           	</foreach>
+	</select>
+	 
+	<select id="getAnswerStatusByScopeIdsAndSId" parameterType="java.util.Map"  resultType="java.util.Map">
+		SELECT
+			scope.ID AS SCOPE_ID,
+			esa.STATUS AS STATUS
+		FROM 
+			APP_SCOPE scope,EXAM_SCOPE_POLICY_REL espr, EXAM_STUDENT_ANSWER esa, EXAM_PAPER ep
+		WHERE
+           	scope."ID"=espr.SCOPE_ID AND ep.EXAM_POLICY_ID=espr.POLICY_ID AND
+			ep."ID"=esa.PAPERS_ID AND esa.ENABLED_FLAG=1 AND 
+			scope."ID" IN 
+			<foreach item="id" index="index" collection="scopeIds" open="(" separator="," close=")">
+              		#{id}
+           	</foreach>
+			AND esa.STUDENT_ID=${studentId}
+	</select>
+</mapper>
+
+
+

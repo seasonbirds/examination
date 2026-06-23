@@ -1,0 +1,51 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<#setting number_format="#">
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" onclick="toggleSelect()"/></th>
+			<th>序号</th>
+			<th>&nbsp;策略名称</th>
+			<th>&nbsp;答题时间（分钟，０或空为不限时）</th>
+			<th>&nbsp;总分</th>
+			<th>&nbsp;及格分</th>
+			<th>&nbsp;考试开放开始时间</th>
+			<th>&nbsp;考试开放结束时间</th>
+			<th>&nbsp;立即显示答案</th>
+			<th>&nbsp;立即显示分数</th>
+			<th>&nbsp;是否保存试卷</th>
+			<th>&nbsp;是否统一试卷</th>
+			<th>&nbsp;出题方式</th>
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;<input name="ids"  value="1233" type="checkbox"/></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+			<td>&nbsp;${item.name}</td>
+			<td>&nbsp;${item.time}</td>
+			<td>&nbsp;${item.totalScore}</td>
+			<td>&nbsp;${item.passScore}</td>
+			<td>&nbsp;${item.examTimeStart?string("yyyy-MM-dd HH:mm:ss")}</td>
+			<td>&nbsp;${item.examTimeEnd?string("yyyy-MM-dd HH:mm:ss")}</td>
+			<td>&nbsp;<#if item.showAnswer=="YES">${resourceBundle("Bool.YES")}<#else>${resourceBundle("Bool.NO")}</#if></td>
+			<td>&nbsp;<#if item.showScore=="YES">${resourceBundle("Bool.YES")}<#else>${resourceBundle("Bool.NO")}</#if></td>
+			<td>&nbsp;<#if item.savePage=="YES">${resourceBundle("Bool.YES")}<#else>${resourceBundle("Bool.NO")}</#if></td>
+			<td>&nbsp;<#if item.isUnify=="YES">${resourceBundle("Bool.YES")}<#else>${resourceBundle("Bool.NO")}</#if></td>
+			<td>&nbsp;<#if item.type=="AUTO">${resourceBundle("Assemble.AUTO")}<#elseif item.type=="MANUAL">${resourceBundle("Assemble.MANUAL")}</#if></td>
+			<td><a href="javascript:void(0)" onclick="showPolicydialog('show','${item.id}')"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a href="javascript:void(0)" onclick="showPolicydialog('edit','${item.id}')"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="f_single_delete" href="${webroot}/examPolicy!remove.action?examPolicy.id=${item.id}"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="16"/>
+	</tbody>	
+</table>
+
+
+

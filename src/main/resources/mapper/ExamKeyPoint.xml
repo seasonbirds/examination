@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamKeyPoint">
+	
+	<resultMap id="result" type="ExamKeyPoint">
+		<result property="courseId" column="COURSE_ID" jdbcType="NUMERIC"/>
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="name" column="NAME" jdbcType="VARCHAR"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+		<result property="status" column="STATUS" jdbcType="VARCHAR"/>
+		<result property="parentId" column="PARENT_ID" jdbcType="NUMERIC"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamKeyPoint">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_KEY_POINT.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_KEY_POINT(
+				COURSE_ID,
+				ID,
+				NAME,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				MEMO,
+				STATUS,
+				PARENT_ID
+			)VALUES(
+				#{courseId,jdbcType=NUMERIC},
+				#{id,jdbcType=NUMERIC},
+				#{name,jdbcType=VARCHAR},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{memo,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				#{parentId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamKeyPoint">
+		<![CDATA[
+			UPDATE EXAM_KEY_POINT SET 
+				COURSE_ID=#{courseId},
+				ID=#{id},
+				NAME=#{name},
+				LAST_UPDATED_BY=#{lastUpdatedBy},
+				CREATED_BY=#{createdBy},
+				MEMO=#{memo},
+				STATUS=#{status},
+				PARENT_ID=#{parentId}
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_KEY_POINT SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_KEY_POINT WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_KEY_POINT
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamKeyPoint"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_KEY_POINT
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="courseId!=null" >
+			AND COURSE_ID=#{courseId}
+		</if>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="name!=null" >
+			AND upper(NAME) like upper('%${name}%')
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="memo!=null" >
+			AND upper(MEMO) like upper('%${memo}%')
+		</if>
+		<if test="status!=null" >
+			AND upper(STATUS) like upper('%${status}%')
+		</if>
+		<if test="parentId!=null" >
+			AND PARENT_ID=#{parentId}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_KEY_POINT
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.courseId!=null" >
+			AND COURSE_ID=#{bo.courseId}
+		</if>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.name!=null" >
+			AND upper(NAME) like upper('%${bo.name}%')
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.memo!=null" >
+			AND upper(MEMO) like upper('%${bo.memo}%')
+		</if>
+		<if test="bo.status!=null" >
+			AND upper(STATUS) like upper('%${bo.status}%')
+		</if>
+		<if test="bo.parentId!=null" >
+			AND PARENT_ID=#{bo.parentId}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="getNumOfSubKeyPointByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        <![CDATA[
+            SELECT count(*)
+            FROM
+                EXAM_KEY_POINT
+            WHERE
+                ENABLED_FLAG=1 AND PARENT_ID=#{pid}
+        ]]>
+    </select>
+    
+    <select id="getKeyPointIdListByCourseId" parameterType="java.util.List" resultType="java.lang.Integer">
+           SELECT ID
+           FROM
+               EXAM_KEY_POINT
+           WHERE
+               ENABLED_FLAG=1 AND PARENT_ID=0
+	        AND COURSE_ID IN
+	        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		       	#{item}
+		    </foreach>
+    </select>
+	
+</mapper>
+
+
+

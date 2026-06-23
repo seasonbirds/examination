@@ -1,0 +1,478 @@
+<div class="input_box">
+	<form id="scopeForm">
+		<div class="box_title">考试信息</div>
+		<div class="box_content">
+			<input type="hidden" id="appScopeId" name="appScopeId" value="${appScope.id!0}">
+			<table class="tb_input" >
+				<tbody>
+					<tr>
+						<th>考试名称 <strong class="red">*</strong></th>
+						<td>
+							<input id="scopeName" name="scopeName" type="text" class="select_input" value="${appScope.name!}"></input>
+						</td>
+					</tr>
+					<tr>
+						<th>考试类型 <strong class="red">*</strong></th>
+						<td>
+							<select id="scopeType" name="scopeType">
+								<option value='${appScope.type!}'>${resourceBundle('QuestionRangeType.${appScope.type!}')}</option>
+							</select>
+						</td>
+					</tr>
+					<tr id="tr_first" name="tr_course">
+						<th>课程 <strong class="red">*</strong></th>
+						<td>
+							<select id="essentialCourseId" name="courseId" class="select_input" onchange="reloadTree()">
+							</select>
+						</td>
+					</tr>
+					<tr id="tr_setCourse">
+						<th>设置多门考试课程</th>
+						<td>
+							<table border=0 cellspacing=0 cellpadding=0 bordercolor="#000000">
+								<tr>
+									<td style="border-top:none;width:50%;"><input type="checkbox" id="setMutilCourse" onclick="setMutilCourseFun(this)"></td>
+									<td style="border-top:none;">
+										<a id="addCourseButton" class="bt_blue_30 f_batch_operate" style="display:none" href="javascript:void(0)" onclick="addCourse()">添加课程</a></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<th>设置知识点</th>
+						<td>
+							<input type="checkbox" id="setKeyPoints" onclick="setKeypointFun(this)"  style="margin-left:6px;">&nbsp;&nbsp;&nbsp;*仅限考单门课程
+						</td>
+					</tr>
+					<tr class="hide" id="keyPointArea">
+						<th></th>
+						<td>
+							<div style="margin-left:10px;margin-top:5px;border:1px;">
+								<ul id="courseKeyPointTree" class="ztree" style="margin-top:0; width:230px;height:210px;overflow:auto"></ul>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>设置策略</th>
+						<td>
+							请在策略列表中设置策略
+						</td>
+					</tr>
+					<tr>
+						<th>状态设置</th>
+						<td>
+							<input type="radio" id="radio11" name="scopeStatus" value="1" <#if appScope.status??&&appScope.status==1>checked="checked"</#if>>
+							<label for="radio11">启用</label>
+							<input type="radio" id="radio12" name="scopeStatus" value="0" <#if appScope.status??&&appScope.status==0>checked="checked"</#if>>
+							<label for="radio12">禁用</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="box_foot">
+			<div class="box_foot_buttons">
+				<a class="bt_green" id="input_submit" href="javascript:void(0)" onclick="saveScopeExam()">保存</a>
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">返回</a>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+<!--
+/**
+ * 必选课程change事件函数
+ * 当设置知识点checkbox被选中时，重新加载知识点树
+ */
+function reloadTree(){
+	if($("#setKeyPoints")[0].checked == true){
+		var treeObj = $.fn.zTree.getZTreeObj("courseKeyPointTree");
+		treeObj.reAsyncChildNodes(null, "refresh");
+	}
+}
+
+/**
+ * 设置多门课程的checkbox的点击事件函数
+ *	1、选中时，显示增加课程按钮,如果设置知识点checkbox被选择，取消其选中，并隐藏知识点设置区域
+ *  2、取消选中时，隐藏增加课程按钮，并删除已经增加了的课程
+ */
+function setMutilCourseFun(obj){
+	if(obj.checked){
+		$("#addCourseButton").css("display","block");
+		if($("#setKeyPoints")[0].checked == true){
+			$("#setKeyPoints").attr("checked",'false');
+			$("#setKeyPoints").click();
+		}
+	}else{
+		$("#addCourseButton").css("display","none");
+		$("tr[name='tr_course']").each(function(){
+			if($(this).attr("id") != "tr_first"){
+				this.remove();
+			}
+		});
+	}
+
+	$.colorbox.resize();
+}
+
+/**
+ * 增加课程按钮的点击事件函数：增加一个课程选择下拉框
+ */
+function addCourse(){
+	var tr = $("<tr name='tr_course'></tr>");
+	var th = $("<th>课程</th>");
+	var td = $("<td></td>");
+	var img = $("<a onclick='delCourse(this)'><img src='img/close2.gif' style='margin-left:5px;' title='删除课程'/><a>");
+	var courseClone = $("#essentialCourseId").clone(true);
+	td.append(courseClone);
+	td.append(img);
+	tr.append(th).append(td);
+	$("#tr_setCourse").before(tr);
+	$.colorbox.resize();
+	
+	return courseClone;
+}
+
+/**
+ * 每个新增课程下拉框后的删除课程按钮点击函数：删除该课程选择下拉框
+ */
+function delCourse(obj){
+	$(obj).parent().parent().remove();
+}
+
+/**
+ * 设置知识点的checkbox的点击事件函数
+ *	1、选中时，显示课程的知识点树（知识点树未初始化，则初始化）；如果设置多门课程的checkbox被选中，取消其选中，被删除已经增加的课程
+ *	2、取消选中时，隐藏知识点树
+ */
+function setKeypointFun(obj){
+	if(obj.checked){
+		$("#keyPointArea").removeClass("hide");
+		if($("#setMutilCourse").get(0).checked == true){
+			$("#setMutilCourse").attr("checked",'false');
+			$("#setMutilCourse").click();
+		}
+		if(!treeCreated){
+			initTree();
+		}else{
+			var treeObj = $.fn.zTree.getZTreeObj("courseKeyPointTree");
+			treeObj.reAsyncChildNodes(null, "refresh");
+		}
+	}else{
+		$("#keyPointArea").addClass("hide");
+	}
+
+	$.colorbox.resize();
+}
+
+/**
+ * 验证多门课程函数：选择的每门课程不能相同
+ */
+function courseOrKeyPointValid(){
+	var validResult = true;
+	if($("#setMutilCourse")[0].checked){
+		var map = new HashMap();
+		var objs = $("tr[name='tr_course']");
+		for(var i=0; i<objs.length; i++){
+			var value = $(objs[i]).find("td").find(".select_input").val();
+			if(map.containKey(value)){
+				validResult = false;
+				jAlert("请选择不一样的课程");
+				break;
+			}else{
+				map.put(value, 0);
+			}
+		}
+	}
+
+	return validResult;
+}
+
+//设置多门课程checkbox的初始状态
+var mutilCourseCheckInitStatus = false;
+//设置知识点checkbox的初始状态
+var keyponitCheckInitStatus = false;
+//多门课程的初始化数组
+var mutilCourseInitArray = new Array();
+//多门课程的选择数组
+var mutilCourseArray;
+//知识点初始化数组
+var keyPonitInitArray = new Array();
+//知识点选择数组
+var keyPointArray;
+
+/**
+ * 数组排序函数
+ */
+var sortNum = function(a, b){
+	return a - b;
+};
+
+/**
+ * 获取课程设置的状态:相对初始状态是否改变
+ */
+function getMutilCourseModStatus(){
+	mutilCourseArray = new Array();
+	var status = $("#setMutilCourse")[0].checked;
+	//初始状态和当然状态都未选中
+	if(status == false && status == mutilCourseCheckInitStatus){
+		//必选课程是否改变
+		if(mutilCourseInitArray.length == 1){
+			if($("#essentialCourseId").val() == mutilCourseInitArray[0]){
+				return false;
+			}else{
+				mutilCourseArray.push($("#essentialCourseId").val());
+				return true;
+			}
+		}else{
+			mutilCourseArray.push($("#essentialCourseId").val());
+			return true;
+		}
+	}
+
+	//获取选择的课程
+	$("tr[name='tr_course']").each(function(){
+		var value = $(this).find("td").find(".select_input").val();
+		mutilCourseArray.push(value);
+	});
+
+	var courseArray = mutilCourseArray.concat();
+	//先将数组排序再转化为字符串比较
+	var courseStr = courseArray.sort(sortNum).toString();
+	var courseInitStr = mutilCourseInitArray.sort(sortNum).toString();
+	if(courseStr == courseInitStr){
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * 获取知识点设置的状态:相对初始状态是否改变
+ */
+function getKeyPonitStatus(){
+	var status = $("#setKeyPoints")[0].checked;
+	//初始状态和当然状态都未选中
+	if(status == false && keyponitCheckInitStatus == status){
+		return false;
+	}
+	//取消选中时
+	if(status == false && keyponitCheckInitStatus == true){
+		keyPointArray = new Array();
+		return true;
+	}
+
+	//获取选中的知识点
+	var treeObj = $.fn.zTree.getZTreeObj("courseKeyPointTree");
+	var checkNodes = treeObj.getCheckedNodes(true);
+	//初始状态未选中，提交时状态为选中，但是没有选择知识点
+	if(status == true && keyponitCheckInitStatus == false && checkNodes.length == 0){
+		return false;
+	}
+
+	keyPointArray = new Array();
+	
+	//将知识点放入数组
+	for(var i in checkNodes){
+		keyPointArray.push(checkNodes[i].id);
+	}
+	
+	//知识点初始数组不为空，比较前后选择是否相同
+	if(keyPonitInitArray.length != 0){
+		var keyPoint = keyPointArray.concat();
+		var keyPointStr = keyPoint.sort(sortNum).toString();
+		var keyPontInitStr = keyPonitInitArray.sort(sortNum).toString();
+		if(keyPointStr == keyPontInitStr){
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * 获取提交的参数
+ */
+function getScopeData(){
+	//TODO
+	var params = {
+		"appScope.name":$("#scopeName").val(),
+		"appScope.type":$("#scopeType").val(),
+		"appScope.status":$("input[name='scopeStatus']:checked").val()
+	};
+
+	var appScopeId = $("#appScopeId").val();
+	if(appScopeId != 0){
+		params["appScope.id"] = appScopeId;
+	}
+
+	if(getMutilCourseModStatus()){
+		params["courseModFlag"] = true;
+		params["courseIds"] = mutilCourseArray.toString();
+	}
+
+	if(getKeyPonitStatus()){
+		params["keyPointModFlag"] = true;
+		params["keyPointIds"] = keyPointArray.toString();
+	}
+
+	return params;
+}
+
+/**
+ * 保存按钮事件函数
+ */
+function saveScopeExam(){
+	if($("#scopeForm").valid() && courseOrKeyPointValid()){
+		var params = getScopeData();
+		$.post("appScope!save.action", params, function(response){
+			if(response.result == 0){
+				$.colorbox.close();
+				jAlertSuccess("操作成功");
+				pageQuery();
+			}else{
+				jAlertError(response.msg);
+			}
+		},"json");
+	}
+}
+
+/**
+ * 加载数据
+ */
+function loadScopeDate(scopeId){
+	$.post("appScope!getScopeData.action", "appScope.id=" + scopeId, function(response){
+		if(response.result == 0){
+			var data = response.data;
+			//$("#scopeType").val(data.type);
+			var courseIds = data.courseIds.split(",");
+			mutilCourseInitArray = courseIds;
+			$("#essentialCourseId").val(courseIds[0]);
+			if(courseIds.length  > 1){
+				$("#setMutilCourse").click();
+				for(var i = 1; i < courseIds.length; i++){
+					var courseObj = addCourse();
+					$(courseObj).val(courseIds[i]);
+				}
+				mutilCourseCheckInitStatus = true;
+			}else if(data.keyPointIds != undefined && data.keyPointIds != null && $.trim(data.keyPointIds) != ""){
+				var keyPointIds = data.keyPointIds.split(",");
+				keyPonitInitArray = keyPointIds;
+				$("#setKeyPoints").click();
+				keyponitCheckInitStatus = true;
+			}
+		}else{
+			jAlertError("Load data error!");
+		}
+	},"json");
+}
+
+//知识点树创建的标志
+var treeCreated = false;
+/**
+ * 初始化知识点树
+ */
+function initTree(){
+	var mySetting = {
+		view: {
+			dblClickExpand: false
+		},
+		data: {
+			simpleData: {
+				enable: true,
+				idKey:"id",
+				pIdKey:"pid",
+				rootPId: 0
+			}
+		},
+		check: {
+			enable: true,
+			chkStyle: "checkbox",
+			chkboxType: { "Y": "ps", "N": "ps" }
+		},
+		async: {
+			enable: true,
+			url:function(){return "examKeyPoint!getKeyPointTree.action?examKeyPoint.courseId="+$("#essentialCourseId").val(); },//每次刷新取选择的课程作参数
+			type:"get"
+		},
+		callback: {
+			onAsyncSuccess:function(event,treeId,treeNode){
+				if(keyPonitInitArray != undefined && keyPonitInitArray != null && keyPonitInitArray.length > 0){
+					var treeObj = $.fn.zTree.getZTreeObj("courseKeyPointTree");
+					//暂时修改树的checktype，避免设置父节点时所有子节点被选中
+					var type = treeObj.setting.check.chkboxType;
+					treeObj.setting.check.chkboxType = { "Y": "p", "N": "p" };
+					for(var index in keyPonitInitArray){
+						var node = treeObj.getNodeByParam("id", keyPonitInitArray[index], null);
+						treeObj.checkNode(node, true, true);
+					}
+					treeObj.setting.check.chkboxType = type;
+				}
+			}
+		}
+	};
+	$.fn.zTree.init($("#courseKeyPointTree"), mySetting);
+	treeCreated = true;
+}
+
+$(function(){
+	//加载课程下拉框
+	$.post("${webroot}/appCourse!getCourseList.action",function(response){
+		if(response.result == "success"){
+			var options = "";
+			var data = response.data;
+			for(var i=0; i<data.length; i++){
+				options += "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
+			}
+			$("#essentialCourseId").html(options);
+		}else{
+			jAlertError(response.msg);
+		}
+
+	},"json");
+
+	$("#scopeForm").validate({
+		rules:{
+			"scopeName":{
+				required:true
+			},
+			"scopeType":{
+				required:true
+			},
+			"courseId":{
+				required:true
+			},
+			"scopeStatus":{
+				required:true
+			}
+		},
+		messages:{
+			"scopeName":{
+				required:"请输入考试名称"
+			},
+			"scopeType":{
+				required:"请选择考试类型"
+			},
+			"courseId":{
+				required:"请选择考试课程"
+			},
+			"scopeStatus":{
+				required:"请设置状态"
+			}
+		},
+		errorPlacement: function (error, element) {
+			error.appendTo(element.parent());
+ 		} 
+	});
+
+	<#if dialogType??>
+		<#if dialogType=="show">
+			$("#input_submit").addClass("hide");
+		</#if>
+		<#if dialogType=="show" || dialogType=="edit">
+			//load question setting
+			loadScopeDate('${appScope.id}');
+		</#if>
+	</#if>
+});
+//-->
+</script>

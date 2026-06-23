@@ -1,0 +1,74 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form">
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>名称：</th>
+				<td>&nbsp;
+					<select name="scopeId" id="scopeId">
+						<option value="0" selected>----所有----</option>
+						<#if scopeList??&&(scopeList?size>0)>
+							<#list scopeList as item>
+								<option value="${item.id}">${item.name}</option>
+							</#list>
+						</#if>
+					</select>
+				</td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:search()" >查 询</a>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	考试demo列表	
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "data.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+//查询方法 dragSearch 是否是拖动查询,默认不是
+function search(dragSearch){
+	
+	var map=new Map();	
+	map.put("scopeId","'"+document.getElementById("scopeId").value+"'");
+
+	paginatorSearch('${webroot}/paperTest!search.action',map,dragSearch);
+}
+
+function applyExam(scopeId, obj){
+	obj.disabled = "true";
+	window.open("examPaper!goExam.action?scopeId="+scopeId);
+}
+
+function continueExam(scopeId, obj){
+	obj.disabled = "true";
+	window.open("examPaper!goContinueException.action?scopeId="+scopeId);
+}
+
+function showExamResult(scopeId, obj){
+	//obj.disabled = "true";
+	window.open("examPaper!showExamResult.action?scopeId="+scopeId);
+}
+</SCRIPT>	

@@ -1,0 +1,155 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<div class="input_box" id="dialog">
+	<form id="keyPointForm" >
+		<div class="box_title">知识点信息</div>
+		<div class="box_content">
+			<input type="hidden" id="nodeId" name="examKeyPoint.id" value="${examKeyPoint.id!}" />
+			<input type="hidden" id="selectCourseId" name="examKeyPoint.courseId" value="${examKeyPoint.courseId!0}">
+			<table class="tb_input" >
+				<tbody>
+					<tr>
+						<th>知识点名称<strong class="red">*</strong></th>
+						<td>
+							<input type="text" id="keyPointName" name="examKeyPoint.name" class="form_input" value="${examKeyPoint.name!}"/>
+						</td>
+					</tr>
+					<tr>
+						<th>状态<strong class="red">*</strong></th>
+						<td> 
+							<#if examKeyPoint.status??>
+							<@enum.radio id="examKeyPoint.status" type="com.vnetoo.common.enums.Enabled" default="${examKeyPoint.status}"/>
+							<#else>
+							<@enum.radio id="examKeyPoint.status" type="com.vnetoo.common.enums.Enabled" default="USED"/>
+							</#if>
+						</td>
+					</tr>
+					<tr>
+						<th>所属父节点 <strong class="red">*</th>
+						<td>
+							<input type="text" id="parentNodeName" name="examKeyPoint.parentName" class="form_input" value="${examKeyPoint.parentName!}" readonly=true />
+							<input type="hidden" id="parentNodeId" name="examKeyPoint.parentId" value="${examKeyPoint.parentId!}" />
+						</td>
+					</tr>
+					<tr>
+						<th>备注</th>
+						<td>
+							<textarea  id="memo" name="examKeyPoint.memo" class="form_memo" >${examKeyPoint.memo!}</textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="box_foot">
+			<div class="box_foot_buttons">
+				<a class="bt_green" id="input_submit" href="javascript:void(0)" onclick="submitKeyPoint();">保存</a>
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close();">返回</a>
+			</div>
+		</div>
+	</form>
+</div>
+<div id="selectTree">
+	<ul id="selectKeyPointTree" class="ztree" style="margin-top:0; width:200px;height:180px;overflow:auto;"></ul>
+</div>
+
+<script>
+var selectTreeSetting = {
+	view: {
+		dblClickExpand: false
+	},
+	data: {
+		simpleData: {
+			enable: true,
+			idKey:"id",
+			pIdKey:"pid",
+			rootPId: 0
+		}
+	},
+	async: {
+		enable: true,
+		url:function(){return "examKeyPoint!getKeyPointTree.action" + "?examKeyPoint.courseId=" + $("#selectCourseId").val();},
+		type:"get"
+	},
+	callback: {
+		onClick:function(event,treeId,treeNode){
+			var zTree = $.fn.zTree.getZTreeObj("selectKeyPointTree");
+			var nodes = zTree.getSelectedNodes();
+			$("#parentNodeId").val(nodes[0].id == "-1" ? "0" : nodes[0].id);
+			$("#parentNodeName").val(nodes[0].name);
+			$("#parentNodeName").blur();
+			hideMenu();
+		}
+	}
+};
+
+function hideMenu() {
+	$("#selectTree").css("display","none");
+	$("body").unbind("mousedown", onBodyDown);
+}
+function onBodyDown(event) {
+	if (!(event.target.id == "menuBtn" || event.target.id == "selectTree" || $(event.target).parents("#selectTree").length>0)) {
+		hideMenu();
+	}
+}
+
+function submitKeyPoint(){
+	if($("#keyPointForm").valid()){
+		var data = $("#keyPointForm").formSerialize();
+		$.post("examKeyPoint!save.action",data,function(response){
+			if(response.result == 0){
+				$.colorbox.close();
+				jAlertSuccess("操作成功");
+				refreshTree();
+				$("#examKeyPoint\\.name").val();
+				seacherKeyPoint();
+			}else{
+				jAlertError(response.msg);
+			}
+		},"json");
+	}
+}
+
+$(function(){
+	$.fn.zTree.init($("#selectKeyPointTree"), selectTreeSetting);
+	$("#parentNodeName").focus(function(){
+		var select = $("#parentNodeName");
+		var dialogOffset = $("#dialog").offset();
+		var selectOffset = $("#parentNodeName").offset();
+		$("body").bind("mousedown", onBodyDown);
+		$("#selectTree").css({left:(selectOffset.left - dialogOffset.left + 8) + "px", top:(selectOffset.top - dialogOffset.top + select.outerHeight() + 8) + "px"})
+		$("#selectTree").css("display","block");
+	});
+	$("#keyPointForm").validate({
+		onkeyup :true,
+		onBlur:true,
+		rules: {
+			"examKeyPoint.name": {
+				required: true
+			},
+			"examKeyPoint.ststus":{
+				required: true
+			},
+			"examKeyPoint.parentName":{
+				required: true
+			}
+		},
+		messages: {
+			"examKeyPoint.name": {
+				required: "请输入节点名"
+			},
+			"examKeyPoint.ststus":{
+				required: "请选择节点状态"
+			},
+			"examKeyPoint.parentName":{
+				required: "请选择父节点"
+			}
+		}
+	});
+
+	<#if dialogType??>
+		<#if dialogType=="show">
+			$("#input_submit").addClass("hide");
+		</#if>
+	</#if>
+})
+
+</script>

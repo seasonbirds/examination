@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ScopePolicyRel">
+	
+	<resultMap id="result" type="ScopePolicyRel">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="policyId" column="POLICY_ID" jdbcType="NUMERIC"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="ScopePolicyRel">
+	    <![CDATA[
+			INSERT INTO EXAM_SCOPE_POLICY_REL(
+				SCOPE_ID,
+				POLICY_ID
+			)VALUES(
+				#{scopeId,jdbcType=NUMERIC},
+				#{policyId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_SCOPE_POLICY_REL WHERE SCOPE_ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectList" parameterType="ScopePolicyRel"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_SCOPE_POLICY_REL
+			WHERE	
+				1=1	
+		]]>
+		<if test="scopeId!=null" >
+			AND SCOPE_ID=#{scopeId}
+		</if>
+		<if test="policyId!=null" >
+			AND POLICY_ID=#{policyId}
+		</if>				
+	</select>
+	
+	<delete id="deleteRel" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_SCOPE_POLICY_REL WHERE POLICY_ID=#{policyId} ]]>
+	</delete>
+	
+	<select id="getPolicyCountByScopeId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(1)
+			FROM 
+				EXAM_SCOPE_POLICY_REL
+			WHERE	
+				SCOPE_ID = #{scopeId}
+		]]>
+	</select>
+	
+	<select id="getPaperCountByScopeId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(1)
+			FROM 
+				EXAM_SCOPE_POLICY_REL,EXAM_PAPER
+			WHERE	
+				SCOPE_ID = #{scopeId}
+				AND EXAM_PAPER.ENABLED_FLAG=1
+				AND EXAM_SCOPE_POLICY_REL.POLICY_ID=EXAM_PAPER.EXAM_POLICY_ID
+		]]>
+	</select>
+	
+	<select id="getScopeIdByPolicyId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT SCOPE_ID
+			FROM 
+				EXAM_SCOPE_POLICY_REL
+			WHERE	
+				POLICY_ID=#{policyId}
+		]]>
+	</select>
+	
+	<select id="getPolicyIds" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT POLICY_ID
+			FROM 
+				EXAM_SCOPE_POLICY_REL
+			WHERE	
+				SCOPE_ID=#{scopeId}
+		]]>
+	</select>
+	
+</mapper>
+
+
+

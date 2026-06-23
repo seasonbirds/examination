@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamQuestion">
+	
+	<resultMap id="result" type="ExamQuestion">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="code" column="CODE" jdbcType="VARCHAR"/>
+		<result property="keyPointId" column="KEY_POINT_ID" jdbcType="NUMERIC"/>
+		<result property="lev" column="LEV" jdbcType="VARCHAR"/>
+		<result property="content" column="CONTENT" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="type" column="TYPE" jdbcType="VARCHAR"/>
+		<result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="parse" column="PARSE" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="rangeType" column="RANGE_TYPE" jdbcType="VARCHAR"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamQuestion">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_QUESTION.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_QUESTION(
+				ID,
+				CODE,
+				KEY_POINT_ID,
+				LEV,
+				CONTENT,
+				TYPE,
+				MEMO,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				PARSE,
+				RANGE_TYPE
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{code,jdbcType=VARCHAR},
+				#{keyPointId,jdbcType=NUMERIC},
+				#{lev,jdbcType=VARCHAR},
+				#{content,jdbcType=BLOB},
+				#{type,jdbcType=VARCHAR},
+				#{memo,jdbcType=VARCHAR},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{parse,jdbcType=BLOB},
+				#{rangeType,jdbcType=VARCHAR}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamQuestion">
+		<![CDATA[
+			UPDATE EXAM_QUESTION SET  
+				CODE=#{code,jdbcType=VARCHAR},
+				KEY_POINT_ID=#{keyPointId,jdbcType=NUMERIC},
+				LEV=#{lev,jdbcType=VARCHAR},
+				CONTENT=#{content,jdbcType=BLOB},
+				TYPE=#{type,jdbcType=VARCHAR},
+				MEMO=#{memo,jdbcType=VARCHAR}, 
+				LAST_UPDATED_BY=#{lastUpdatedBy,jdbcType=NUMERIC},
+				CREATED_BY=#{createdBy,jdbcType=NUMERIC},
+				PARSE=#{parse,jdbcType=BLOB},
+				RANGE_TYPE=#{rangeType,jdbcType=VARCHAR}
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_QUESTION SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_QUESTION WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_QUESTION
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamQuestion"  resultMap="result">
+		SELECT Q.ID,Q.CODE,Q.KEY_POINT_ID,Q.LEV,Q.CONTENT,Q.TYPE,Q.MEMO,Q.LAST_UPDATE_DATE,Q.LAST_UPDATED_BY,
+			   Q.CREATION_DATE,Q.CREATED_BY,Q.ENABLED_FLAG,Q.PARSE,Q.RANGE_TYPE
+		FROM 
+			EXAM_QUESTION Q
+		<if test="courseId!=null" >
+			,EXAM_KEY_POINT KP
+		</if>
+		WHERE
+			Q.ENABLED_FLAG=1
+		<if test="id!=null" >
+			AND Q.ID=#{id}
+		</if>
+		<if test="code!=null" >
+			AND upper(Q.CODE) like upper('%${code}%')
+		</if>
+		<if test="keyPointId!=null" >
+			AND Q.KEY_POINT_ID=#{keyPointId}
+		</if>
+		<if test="lev!=null" >
+			AND upper(Q.LEV) like upper('%${lev}%')
+		</if>
+		<if test="content!=null" >
+			AND Q.CONTENT=#{content}
+		</if>
+		<if test="type!=null" >
+			AND upper(Q.TYPE) like upper('%${type}%')
+		</if>
+		<if test="memo!=null" >
+			AND upper(Q.MEMO) like upper('%${memo}%')
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND Q.LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND Q.LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND Q.CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND Q.CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND Q.ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="parse!=null" >
+			AND Q.PARSE=#{parse}
+		</if>
+		<if test="rangeType!=null" >
+			AND upper(Q.RANGE_TYPE) like upper('%${rangeType}%')
+		</if>
+		<if test="courseId!=null" >
+			AND Q.KEY_POINT_ID=KP.ID
+			AND KP.COURSE_ID=#{courseId}
+		</if>
+			ORDER BY Q.ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		SELECT Q.ID,Q.CODE,Q.KEY_POINT_ID,Q.LEV,Q.CONTENT,Q.TYPE,Q.MEMO,Q.LAST_UPDATE_DATE,Q.LAST_UPDATED_BY,
+			   Q.CREATION_DATE,Q.CREATED_BY,Q.ENABLED_FLAG,Q.PARSE,Q.RANGE_TYPE
+		FROM 
+			EXAM_QUESTION Q
+		<if test="bo.courseId!=null" >
+			,EXAM_KEY_POINT KP
+		</if>	
+		WHERE
+			Q.ENABLED_FLAG=1
+		<if test="bo.id!=null" >
+			AND Q.ID=#{bo.id}
+		</if>
+		<if test="bo.code!=null" >
+			AND upper(Q.CODE) like upper('%${bo.code}%')
+		</if>
+		<if test="bo.keyPointId!=null" >
+			AND Q.KEY_POINT_ID=#{bo.keyPointId}
+		</if>
+		<if test="bo.lev!=null" >
+			AND upper(Q.LEV) like upper('%${bo.lev}%')
+		</if>
+		<if test="bo.content!=null" >
+			AND Q.CONTENT=#{bo.content}
+		</if>
+		<if test="bo.type!=null" >
+			AND upper(Q.TYPE) like upper('%${bo.type}%')
+		</if>
+		<if test="bo.memo!=null" >
+			AND upper(Q.MEMO) like upper('%${bo.memo}%')
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND Q.LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND Q.LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND Q.CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND Q.CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND Q.ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.parse!=null" >
+			AND Q.PARSE=#{bo.parse}
+		</if>
+		<if test="bo.rangeType!=null" >
+			AND upper(Q.RANGE_TYPE) like upper('%${bo.rangeType}%')
+		</if>
+		<if test="bo.courseId!=null" >
+			AND Q.KEY_POINT_ID=KP.ID
+			AND KP.COURSE_ID=#{bo.courseId}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="getQuestionTypeAndCountByKeyPointsAndRangeType" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			CONCAT(TYPE,LEV) as type,count(1) as typeNum
+		FROM 
+			EXAM_QUESTION
+		WHERE
+			ENABLED_FLAG=1 AND RANGE_TYPE=#{rangeType} AND KEY_POINT_ID IN
+			<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+               	#{id}
+            </foreach>
+		GROUP BY TYPE,LEV
+	</select>
+	
+	<select id="getQuestionIds" parameterType="java.util.Map" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT 
+				ID
+			FROM 
+				EXAM_QUESTION
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="type!=null" >
+			AND upper(TYPE)=upper(#{type})
+		</if>
+		<if test="lev!=null" >
+			AND upper(LEV)=upper(#{lev})
+		</if>
+		<if test="rangeType!=null" >
+			AND upper(RANGE_TYPE)=upper(#{rangeType})
+		</if>
+		<if test="list!=null" >
+			AND KEY_POINT_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+                	#{id}
+                </foreach>
+		</if>
+		ORDER BY ID
+	</select>
+	
+	<select id="getQuestionCount" parameterType="java.util.Map"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(1)
+			FROM 
+				EXAM_QUESTION
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="rangeType!=null" >
+			AND upper(RANGE_TYPE)=(#{rangeType})
+		</if>
+		<if test="lev!=null" >
+			AND upper(LEV)=(#{lev})
+		</if>
+		<if test="type!=null" >
+			AND upper(TYPE)=(#{type})
+		</if>
+		<if test="list!=null" >
+			AND KEY_POINT_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+                	#{id}
+                </foreach>
+		</if>
+	</select>
+	
+	<select id="getQuestionTypeAndIds" parameterType="java.util.Map" resultType="java.util.Map">
+		<![CDATA[
+			SELECT 
+				CONCAT(TYPE,LEV) as TYPE, ID
+			FROM 
+				EXAM_QUESTION
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="rangeType!=null" >
+			AND upper(RANGE_TYPE)=upper(#{rangeType})
+		</if>
+		<if test="keyPoint!=null" >
+			AND KEY_POINT_ID IN
+				<foreach item="kpId" index="index" collection="keyPoint" open="(" separator="," close=")">
+                	#{kpId}
+                </foreach>
+		</if>
+		<if test="excludeIds!=null" >
+			AND ID NOT IN
+				<foreach item="ecId" index="index" collection="excludeIds" open="(" separator="," close=")">
+                	#{ecId}
+                </foreach>
+		</if>
+		ORDER BY ID
+	</select>
+	
+</mapper>
+
+
+

@@ -1,0 +1,346 @@
+<!--编辑表格begin-->
+<#escape x as x?html>
+<#setting number_format="#">
+<div class="input_box" style="width:800px">
+	<form id="tb_input" method="post">
+		<input type="hidden" id="paperId" name="paperId" value="${paperId}">
+		<input type="hidden" id="studentId" name="studentId" value="${studentId}">
+		<div class="box_title">${examPolicy.name}</div>
+		<div class="box_content">
+			<#assign typeIndex=0>
+			<#if singleList?? && ((singleList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.SINGLE")}(共 ${singleList?size}题)</caption>
+					<tbody>
+						<#list singleList as item>
+							<tr>
+								<td colspan=6>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td colspan=6>
+									<#list item.qAnswerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}<br>
+									</#list>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:30%;align:left;">
+									&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].answerIdx}.${item.answerList[0].content}</#if>
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:30%;align:left;" >
+									&nbsp;${item.correctAnswerList[0].answerIdx}.${item.correctAnswerList[0].content}
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:10%;align:left;" >
+									&nbsp;${item.answerScore!}
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if multList?? && ((multList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.MULT")}(共 ${multList?size}题)</caption>
+					<tbody>
+						<#list multList as item>
+							<tr>
+								<td colspan=6>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td colspan=6>
+									<#list item.qAnswerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}<br>
+									</#list>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:30%;text-align:left;">&nbsp;
+									<#if ((item.answerList?size)>0)>
+										<#list item.answerList as answerItem>
+											&nbsp;${answerItem.answerIdx}.${answerItem.content}<br>
+										</#list>
+									</#if>
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:30%;text-align:left;">
+									<#list item.correctAnswerList as answerItem>
+										&nbsp;${answerItem.answerIdx}.${answerItem.content}<br>
+									</#list>
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:10%;align:left;" >
+									&nbsp;${item.answerScore!}
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if judgeList?? && ((judgeList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.JUDGE")}(共 ${judgeList?size}题)</caption>
+					<tbody>
+						<#list judgeList as item>
+							<tr>
+								<td colspan=6>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td colspan=6>
+									<#list item.qAnswerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}<br>
+									</#list>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:30%;text-align:left;">
+									&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].answerIdx}.${item.answerList[0].content}</#if>
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:30%;text-align:left;">
+									&nbsp;${item.correctAnswerList[0].answerIdx}.${item.correctAnswerList[0].content}
+								</td>
+								<td style="width:10%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:10%;align:left;" >
+									&nbsp;${item.answerScore!}
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if clozeList?? && ((clozeList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.CLOZE")}(共 ${clozeList?size}题)</caption>
+					<tbody>
+						<#list clozeList as item>
+							<tr>
+								<td colspan=2>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(<label id="qscore_${item.questionId}">${item.questionScore}</label>分)
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;${item.correctAnswerList[0].content}
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:85%;text-align:left;">
+									<#if dialogType??&&dialogType=="show">
+										&nbsp;${item.answerScore!}分
+									<#else>
+										<input type="text" id="score_${item.questionId}" value="${item.answerScore!}">
+									</#if>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if explainList?? && ((explainList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.EXPLAIN")}(共 ${explainList?size}题)</caption>
+					<tbody>
+						<#list explainList as item>
+							<tr>
+								<td colspan=2>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(<label id="qscore_${item.questionId}">${item.questionScore}</label>分)
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;${item.correctAnswerList[0].content}
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:85%;text-align:left;">
+									<#if dialogType??&&dialogType=="show">
+										&nbsp;${item.answerScore!}分
+									<#else>
+										<input type="text" id="score_${item.questionId}" value="${item.answerScore!}">
+									</#if>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if qnqList?? && ((qnqList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.QNQ")}(共 ${qnqList?size}题)</caption>
+					<tbody>
+						<#list qnqList as item>
+							<tr>
+								<td colspan=2>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(<label id="qscore_${item.questionId}">${item.questionScore}</label>分)
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									学生答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if>
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									参考答案
+								</td>
+								<td style="width:85%;text-align:left;">
+									&nbsp;${item.correctAnswerList[0].content}
+								</td>
+							</tr>
+							<tr>
+								<td style="width:15%;text-align:center;background: #e2f0ff;">
+									得分
+								</td>
+								<td style="width:85%;text-align:left;">
+									<#if dialogType??&&dialogType=="show">
+										&nbsp;${item.answerScore!}分
+									<#else>
+										<input type="text" id="score_${item.questionId}" value="${item.answerScore!}">
+									</#if>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+		</div>
+		<div class="box_foot" id="foot">
+			<div class="box_foot_buttons" id="footDiv">
+				<a class="bt_green" href="javascript:void(0)" id="input_submit" onclick="reviewSubmit()">保 存</a>
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">返 回</a>
+			</div>
+		</div>
+	</form>
+</div>
+</#escape>
+<script type="text/javascript">
+<!--
+function scoreValid(){
+	var valid = true;
+	$("input[id^='score']").each(function(){
+		var cls = $(this).attr("class");
+		if(cls != undefined && cls != null && cls.indexOf("filedError") > -1){
+			valid = false;
+			$(this).focus();
+			$(this).tip({content:"得分不能超过试题分数！"});
+			return false;
+		}
+	});
+	return valid;
+}
+function reviewSubmit(){
+	if(scoreValid()){
+		var params = "paperId="+$("#paperId").val() + "&studentId=" + $("#studentId").val();
+		$("input[id^='score']").each(function(){
+			var score = $(this).val();
+			if(score == undefined || score == null || $.trim(score) == ""){
+				score = -1;
+			}
+			var id = $(this).attr("id");
+			var qId = id.substring(6);
+			params += "&subjectScore=" + qId + "," + score;
+		});
+
+		$.post("${webroot}/examReview!review.action", params, function(response){
+			if(response.result == 0){
+				$.colorbox.close();
+				jAlertSuccess("提交成功",pageQuery);
+			}else{
+				jAlertError("提交失败，" + response.msg);
+			}
+		},"json");
+	}
+}
+
+$(function(){
+	$("input[id^='score']").keydown(function(event){
+		filterKey(event);
+	});
+
+	$("input[id^='score']").change(function(){
+		var score = parseInt($(this).val());
+		var id = $(this).attr("id");
+		var qId = id.substring(6);
+		var qScore = parseInt($("#" + "qscore_" + qId).html());
+		if(score > qScore){
+			$(this).addClass("filedError");
+			$(this).tip({content:"得分不能超过试题分数！"});
+		}else{
+			if($(this).attr("class").indexOf("filedError") > -1){
+				$(this).removeClass("filedError");
+			}
+		}
+	});
+	
+	<#if dialogType??&&dialogType=="show">
+		$("#input_submit").addClass("hide");
+	</#if>
+}) 
+//-->
+</script>

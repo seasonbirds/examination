@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PaperQuestionRel">
+	
+	<resultMap id="result" type="PaperQuestionRel">
+		<result property="papersId" column="PAPERS_ID" jdbcType="NUMERIC"/>
+		<result property="questionId" column="QUESTION_ID" jdbcType="NUMERIC"/>
+		<result property="score" column="SCORE" jdbcType="NUMERIC"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="PaperQuestionRel">
+	    <![CDATA[
+			INSERT INTO EXAM_PAPER_QUESTION_REL(
+				PAPERS_ID,
+				QUESTION_ID,
+				SCORE
+			)VALUES(
+				#{papersId,jdbcType=NUMERIC},
+				#{questionId,jdbcType=NUMERIC},
+				#{score,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT INTO EXAM_PAPER_QUESTION_REL(PAPERS_ID,QUESTION_ID,SCORE)
+		<foreach item="item" index="index" collection="list" separator="UNION">
+            SELECT 
+            	#{item.papersId},#{item.questionId},#{item.score}
+            FROM DUAL 
+        </foreach>
+	</insert>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_PAPER_QUESTION_REL WHERE SCOPE_ID=#{id} ]]>
+	</delete>
+	
+	<select id="getQuestionIdsByPaperId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT QUESTION_ID
+			FROM 
+				EXAM_PAPER_QUESTION_REL
+			WHERE	
+				PAPERS_ID=#{papersId}
+		]]>
+	</select>
+	
+	<select id="getQuestionNumberByPaperIds" parameterType="java.util.List"  resultType="java.lang.Integer">
+			SELECT count(1)
+			FROM 
+				EXAM_PAPER_QUESTION_REL
+			WHERE
+				PAPERS_ID IN 
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+		               	#{id}
+		        </foreach>
+	</select>
+	
+	<select id="getQuestionTypeAndIdsByPaperId" parameterType="java.util.List"  resultType="java.util.Map">
+			SELECT CONCAT(TYPE,LEV) as type, EXAM_QUESTION.ID as id
+			FROM 
+				EXAM_QUESTION,EXAM_PAPER_QUESTION_REL
+			WHERE	
+				EXAM_QUESTION.ENABLED_FLAG=1
+				and EXAM_QUESTION.ID=EXAM_PAPER_QUESTION_REL.QUESTION_ID
+				and PAPERS_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+		               	#{id}
+		        </foreach>
+	</select>
+</mapper>
+
+
+

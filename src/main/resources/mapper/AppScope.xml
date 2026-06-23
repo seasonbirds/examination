@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AppScope">
+	
+	<resultMap id="result" type="AppScope">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="name" column="NAME" jdbcType="VARCHAR"/>	
+		<result property="type" column="TYPE" jdbcType="VARCHAR"/>
+		<result property="status" column="STATUS" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="AppScope">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_APP_SCOPE.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO APP_SCOPE(
+				ID,
+				NAME,
+				TYPE,
+				STATUS,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{name,jdbcType=VARCHAR},
+				#{type,jdbcType=VARCHAR},
+				#{status,jdbcType=NUMERIC},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1
+			)
+	    ]]>
+	</insert>
+		
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				APP_SCOPE
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="AppScope"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				APP_SCOPE
+			WHERE
+				ENABLED_FLAG=1			
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="name!=null" >
+			AND upper(NAME) like upper('%${name}%')
+		</if>
+		<if test="type!=null" >
+			AND TYPE=#{type}
+		</if>
+		<if test="status!=null" >
+			AND STATUS=#{status}
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				APP_SCOPE
+			WHERE
+				ENABLED_FLAG=1				
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.name!=null" >
+			AND upper(NAME) like upper('%${bo.name}%')
+		</if>
+		<if test="bo.type!=null" >
+			AND TYPE=#{bo.type}
+		</if>
+		<if test="bo.type==null" >
+			AND TYPE !='SIMULATION' AND TYPE !='ENROL'
+		</if>
+		<if test="status!=null" >
+			AND STATUS=#{status}
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<update id="update" parameterType="AppScope">
+		<![CDATA[
+			UPDATE APP_SCOPE SET 
+				NAME=#{name},
+				TYPE=#{type},
+				STATUS=#{status},
+				LAST_UPDATED_BY=#{lastUpdatedBy},
+				LAST_UPDATE_DATE=SYSDATE
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE APP_SCOPE SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM APP_SCOPE WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="getAppScopeByIds" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				APP_SCOPE
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="array!=null" >
+			AND ID IN
+				<foreach item="id" index="index" collection="array" open="(" separator="," close=")">
+                	#{id}
+                </foreach>
+		</if>
+		ORDER BY ID
+	</select>
+	<select id="getAppScopeByTypeAndCourse" parameterType="java.util.Map" resultMap="result">
+		<![CDATA[
+			SELECT 
+				ID,
+				NAME
+			FROM 
+				APP_SCOPE scope, APP_SCOPE_COURSE_REL rel
+			WHERE
+				scope.ID=rel.SCOPE_ID AND scope.ENABLED_FLAG=1 AND scope.STATUS=1
+				AND scope.TYPE=#{type} AND rel.COURSE_ID=#{courseId}
+		]]>
+		ORDER BY ID
+	</select>
+	
+</mapper>
+
+
+

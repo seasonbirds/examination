@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+
+.entrant_box{ width:900px;border:#bed5df solid 1px; margin:20px auto; text-align:center; padding:50px;}
+.entrant_box h2{ font-size:20px; font-weight:bold;}
+.entrant_box ul{ font-size:16px; line-height:24px; text-align:left; margin:20px 100px;}
+.entrant_box ul li{ margin:16px 0;}
+.entrant_box ul li:first-letter{ font-size:30px; color:#CCC; float:left}
+.entrant_box ul li a{ text-decoration:underline; padding:0 4px; color:#0295c3}
+
+.entrant_box p{font-size:16px; margin-top:15px;}
+.entrant_box p span{font-size:12px;color:#CCC; font-family:Arial;}
+
+.entrant_input{margin:20px auto; border:#eee dotted 1px; width:880px;background:#fbfbfb; padding:30px 0 10px 0;border-collapse:collapse; display:block}
+.entrant_input tr{ height:40px;}
+.entrant_input th{ width:25%; text-align:right; font-weight:normal; padding-right:20px; font-size:15px;vertical-align:top;}
+.entrant_input td{vertical-align:top;}
+.entrant_input th strong{ font-size:13px}
+.entrant_input small{ color:#888;font-size:12px; margin-left:20px;}
+.entrant_input label.error{font-size:12px;display:block} 
+
+.main_td{ width:35%; text-align:left; overflow:hidden;}
+.main_td input{ width:250px;}
+.main_td select{ width:255px;}
+.main_td input[type=radio]{ width:20px;}
+.main_td input[type=radio]+label{ width:50px; display:inline-block}
+label.error{ padding:0;}
+.note_td{ width:40%; text-align:left; color:#888; padding-right:100px;}
+.note_td p{ font-size:12px;margin:0; color:#0295c3}
+
+.entrant_show{margin:20px auto; border:#eee dotted 1px; width:880px;background:#fbfbfb; padding:20px 0;}
+.entrant_show th{ width:25%; text-align:right; font-weight:normal;padding-right:20px; font-size:15px}
+.entrant_show th strong{ font-size:13px}
+.entrant_tip p{ text-align:left; padding-left:30px; font-size:12px; color:red; line-height:20px; margin:0;}
+.entrant_tip{ margin-bottom:10px;}
+
+.entrant_show p{text-align:left; padding:0 30px; font-size:12px; line-height:20px; margin:0;color:red}

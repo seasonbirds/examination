@@ -1,0 +1,82 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/examPolicy!search.action">
+<input type="hidden" name="examPolicy.scopeId" id="scopeId" value="${examPolicy.scopeId!}" >
+<input type="hidden" name="examPolicy.examType" id="examType" value="${examPolicy.examType!}" >
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>策略名称：</th>
+				<td>&nbsp;<input type="text" id="examPolicy.name"/></td>
+				<th>出题方式：</th>
+				<td>&nbsp;
+				<@enum.checkbox id="examPolicy.type" type="com.vnetoo.examination.enums.Assemble" default=""/>
+				</td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	出题策略列表
+	<span class="operate_list" style="margin-top:5px;"> 
+		<a class="bt_blue_30 f_add_operate" href="javascript:void(0);" onclick="showPolicydialog('add')">添加</a>
+	</span>
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "data.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+$(function(){
+	$("input[name='examPolicy.type']").click(function(){
+		if(this.checked){
+			var typeObj = $("input[name='examPolicy.type']");		
+			for(var i=0; i<typeObj.length; i++){
+				if($(this).attr("id") === typeObj[i].id){
+					;
+				}else{
+					if(typeObj[i].checked == true){
+						typeObj[i].checked = false;
+					}
+				}
+			}
+		}
+	});
+});
+
+//-->
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

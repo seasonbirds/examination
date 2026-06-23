@@ -1,0 +1,77 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/scoreManage!query.action">
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>考试名称</th>
+				<td>
+					<select id="scopeId" name="examReviewInfo.scopeId">
+						<option value="">---${resourceBundle("select.header")}---</option>
+					</select>
+				</td>
+				<th>学生姓名</th>
+				<td>&nbsp;<input type="text" name="examReviewInfo.studentName"/></td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	试卷审批列表
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "list.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+$(function(){
+	$.post("${webroot}/appScope!getAppScopeJsonData.action", function(response){
+		if(response.result == 0){
+			var options = $("#scopeId").html();
+			var data = response.data;
+			if(data != undefined && data != null && data.length > 0){
+				for(var i in data){
+					options +="<option value=\"" + data[i].id + "\">" + data[i].name + "</option>";
+				}
+			}
+			$("#scopeId").html(options);
+		}else{
+			jAlertError("加载考试列表出错");
+		}
+	},"json");
+})
+
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

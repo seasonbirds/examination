@@ -1,0 +1,35 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" id="checkboxAll" value="0" onclick="selectForAll(this)"/></th>
+			<th>序号</th>
+			<th>名称</th>
+			<th>状态</th>
+			<th>备注</th>
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;<input name="checkbox${item.id}"  value="${item.id?c!0}" type="checkbox" onclick="selectOne(this)"/></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+			<td>&nbsp;${item.name}</td>
+			<td>&nbsp;<#if item.status??>${resourceBundle("Enabled."+item.status)}</#if></td>
+			<td>&nbsp;${item.memo!}</td>
+			<td><a href="javascript:void(0)" onclick="showkeyPointDialog('show','${item.id}')"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a href="javascript:void(0)" onclick="showkeyPointDialog('edit','${item.id}')"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="deleteKeyPoint" href="${webroot}/examKeyPoint!remove.action?examKeyPoint.id=${item.id}" ><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="8"/>
+	</tbody>	
+</table>
+
+
+

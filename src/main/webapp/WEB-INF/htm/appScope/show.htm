@@ -1,0 +1,130 @@
+<div class="input_box">
+	<form id="scopeForm">
+		<div class="box_title">考试信息</div>
+		<div class="box_content">
+			<input type="hidden" id="appScopeId" name="appScopeId" value="${appScope.id!0}">
+			<table class="tb_input" >
+				<tbody>
+					<tr>
+						<th>考试名称 <strong class="red">*</strong></th>
+						<td>
+							${appScope.name!}
+						</td>
+					</tr>
+					<tr>
+						<th>考试类型 <strong class="red">*</strong></th>
+						<td>
+							${resourceBundle('QuestionRangeType.${appScope.type!}')}
+						</td>
+					</tr>
+					<tr id="tr_first" name="tr_course">
+						<th>课程 <strong class="red">*</strong></th>
+						<td>
+							<#if courses??>
+								 <#list courses as item>
+								 	《${item.name!}》<#if item_has_next>、</#if>							 	 
+								 </#list>
+								 <#assign essentialCourseId="${courses[0].id}">
+							 </#if>							 
+						</td>
+					</tr>  
+					<tr id="keyPointArea">
+						<th>知识点<br/>
+						打√表达已选择节点</th>
+						<td>
+							<div style="margin-left:10px;margin-top:5px;border:1px;">
+								<ul id="courseKeyPointTree" class="ztree" style="margin-top:0; width:230px;height:210px;overflow:auto"></ul>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th>设置策略</th>
+						<td>
+							请在策略列表中查看策略
+						</td>
+					</tr>
+					<tr>
+						<th>状态</th>
+						<td>
+							<#if appScope.status==1>启用<#else>禁用</#if>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div> 
+	</form>
+</div>
+<script type="text/javascript">
+<!-- 
+//知识点初始化数组
+var keyPonitInitArray = new Array();
+//知识点选择数组
+var keyPointArray;
+
+/**
+ * 加载数据
+ */
+function loadScopeDate(scopeId){
+	$.post("appScope!getScopeData.action", "appScope.id=" + scopeId, function(response){
+		if(response.result == 0){
+			var data = response.data;
+			if(data.keyPointIds != undefined && data.keyPointIds != null && $.trim(data.keyPointIds) != ""){
+				var keyPointIds = data.keyPointIds.split(","); 
+				keyPonitInitArray = keyPointIds; 
+				initTree();
+			}else{
+				$("#keyPointArea").css("display","none");
+			}
+		}else{
+			jAlertError("Load data error!");
+		}
+	},"json"); 
+	
+}
+
+
+/**
+ * 初始化知识点树
+ */
+function initTree(){
+	var mySetting = {
+		view: {
+			dblClickExpand: false
+		},
+		data: {
+			simpleData: {
+				enable: true,
+				idKey:"id",
+				pIdKey:"pid",
+				rootPId: 0
+			}
+		},
+		async: {
+			enable: true,
+			url:function(){return "examKeyPoint!getKeyPointTree.action?examKeyPoint.courseId="+${essentialCourseId!}; },
+			type:"get"
+		},
+		callback: {
+			onAsyncSuccess:function(event,treeId,treeNode){
+				if(keyPonitInitArray != undefined && keyPonitInitArray != null && keyPonitInitArray.length > 0){
+					
+					var treeObj = $.fn.zTree.getZTreeObj("courseKeyPointTree"); 
+					for(var index in keyPonitInitArray){
+						var node = treeObj.getNodeByParam("id", keyPonitInitArray[index], null);
+						if(!node.isParent){
+							node.icon='img/icon/icon_99.png';
+							treeObj.updateNode(node);    
+						}
+					} 
+				}
+			}
+		}
+	};
+	$.fn.zTree.init($("#courseKeyPointTree"), mySetting);
+}
+
+$(function(){ 
+	loadScopeDate('${appScope.id}');
+});
+//-->
+</script>

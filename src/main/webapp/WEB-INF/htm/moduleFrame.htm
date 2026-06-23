@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>::厦门大学网络教育管理系统::</title>
+<link rel="stylesheet" type="text/css" href="${webroot}/css/colorbox.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/css/common.css" />
+<link rel="stylesheet" type="text/css"  href="${webroot}/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/css/multi-transfer.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/js/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="${webroot}/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${webroot}/js/ddaccordion.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-zh.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${webroot}/js/common.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.tip.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.wordLimit.js"></script>
+<script type="text/javascript" src="${webroot}/js/multi-transfer.js"></script>
+<script type="text/javascript" src="${webroot}/js/paginator.js"></script>	
+<script type="text/javascript" src="${webroot}/js/jconfirmaction.jquery.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.form.js"></script>
+<script type="text/javascript" src="${webroot}/js/ztree/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="${webroot}/js/datePicker/zh_WdatePicker.js"></script>
+<script type="text/javascript" src="${webroot}/js/examPolicy.js"></script>
+<script type="text/javascript" src="${webroot}/js/waitbar.js"></script>
+
+<link rel="stylesheet" type="text/css" href="${webroot}/js/jAlert/jquery.alerts.css" />
+<script type="text/javascript" src="${webroot}/js/jAlert/jquery.alerts.js"></script>
+
+</head>
+<body>
+<div id="main_container"> 
+	<div id="main_content">
+		<div id="content">
+			<input type="hidden" id="moduleName" value="${moduleName!}" />		
+			<div id="rightContent">
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	$(function(){
+		var moduleName = $("#moduleName").val();
+		switch(moduleName){
+			case "keyPoint":
+				$('#rightContent').load("${webroot}/examKeyPoint!pickup.action");
+				break;
+			case "question":
+				$('#rightContent').load("${webroot}/examQuestion!search.action");
+				break;
+			case "simulationExam":
+				$('#rightContent').load("${webroot}/specialExamAction!search.action?appScope.type=SIMULATION");
+				break;
+			case "enrolExam":
+				$('#rightContent').load("${webroot}/specialExamAction!search.action?appScope.type=ENROL");
+				break;
+			case "examManager":
+				$('#rightContent').load("${webroot}/appScope!search.action");
+				break;
+			case "examMonitor":
+				$('#rightContent').load("${webroot}/examMonitor!search.action");
+				break;
+			case "examReview":
+				$('#rightContent').load("${webroot}/examReview!search.action");
+				break;
+			case "scoreManager":
+				$('#rightContent').load("${webroot}/scoreManage!search.action");
+				break;
+			default:
+				$('#rightContent').html("非法的模块名");
+				break;
+		}
+	})
+</script>

@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamPolicy">
+	
+	<resultMap id="result" type="ExamPolicy">
+		<result property="time" column="TIME" jdbcType="NUMERIC"/>
+		<result property="totalScore" column="TOTAL_SCORE" jdbcType="NUMERIC"/>
+		<result property="passScore" column="PASS_SCORE" jdbcType="NUMERIC"/>
+		<result property="examTimeStart" column="EXAM_TIME_START" jdbcType="TIMESTAMP"/>
+		<result property="examTimeEnd" column="EXAM_TIME_END" jdbcType="TIMESTAMP"/>
+		<result property="showAnswer" column="SHOW_ANSWER" jdbcType="VARCHAR"/>
+		<result property="showScore" column="SHOW_SCORE" jdbcType="VARCHAR"/>
+		<result property="savePage" column="SAVE_PAGE" jdbcType="VARCHAR"/>
+		<result property="isUnify" column="IS_UNIFY" jdbcType="VARCHAR"/>
+		<result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="paperCount" column="PAPER_COUNT" jdbcType="NUMERIC"/>
+		<result property="generateCycle" column="GENERATE_CYCLE" jdbcType="NUMERIC"/>
+		<result property="type" column="TYPE" jdbcType="VARCHAR"/>
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="name" column="NAME" jdbcType="VARCHAR"/>
+		<result property="scopeId" column="SCOPE_ID" jdbcType="VARCHAR"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamPolicy">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_POLICY.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_POLICY(
+				TIME,
+				TOTAL_SCORE,
+				PASS_SCORE,
+				EXAM_TIME_START,
+				EXAM_TIME_END,
+				SHOW_ANSWER,
+				SHOW_SCORE,
+				SAVE_PAGE,
+				IS_UNIFY,
+				MEMO,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				PAPER_COUNT,
+				GENERATE_CYCLE,
+				TYPE,
+				ID,
+				NAME
+			)VALUES(
+				#{time,jdbcType=NUMERIC},
+				#{totalScore,jdbcType=NUMERIC},
+				#{passScore,jdbcType=NUMERIC},
+				#{examTimeStart,jdbcType=TIMESTAMP},
+				#{examTimeEnd,jdbcType=TIMESTAMP},
+				#{showAnswer,jdbcType=VARCHAR},
+				#{showScore,jdbcType=VARCHAR},
+				#{savePage,jdbcType=VARCHAR},
+				#{isUnify,jdbcType=VARCHAR},
+				#{memo,jdbcType=VARCHAR},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{paperCount,jdbcType=NUMERIC},
+				#{generateCycle,jdbcType=NUMERIC},
+				#{type,jdbcType=VARCHAR},
+				#{id,jdbcType=NUMERIC},
+				#{name,jdbcType=VARCHAR}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamPolicy">
+		<![CDATA[
+			UPDATE EXAM_POLICY SET 
+				TIME=#{time},
+				TOTAL_SCORE=#{totalScore},
+				PASS_SCORE=#{passScore,jdbcType=NUMERIC},
+				EXAM_TIME_START=#{examTimeStart},
+				EXAM_TIME_END=#{examTimeEnd},
+				SHOW_ANSWER=#{showAnswer},
+				SHOW_SCORE=#{showScore},
+				SAVE_PAGE=#{savePage},
+				IS_UNIFY=#{isUnify},
+				MEMO=#{memo,jdbcType=VARCHAR},
+				LAST_UPDATED_BY=#{lastUpdatedBy},
+				LAST_UPDATE_DATE=SYSDATE,
+				PAPER_COUNT=#{paperCount},
+				GENERATE_CYCLE=#{generateCycle},
+				TYPE=#{type},
+				NAME=#{name}
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_POLICY SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_POLICY WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_POLICY
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamPolicy"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_POLICY
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="time!=null" >
+			AND TIME=#{time}
+		</if>
+		<if test="totalScore!=null" >
+			AND TOTAL_SCORE=#{totalScore}
+		</if>
+		<if test="passScore!=null" >
+			AND PASS_SCORE=#{passScore}
+		</if>
+		<if test="examTimeStart!=null" >
+			AND EXAM_TIME_START=#{examTimeStart}
+		</if>
+		<if test="examTimeEnd!=null" >
+			AND EXAM_TIME_END=#{examTimeEnd}
+		</if>
+		<if test="showAnswer!=null" >
+			AND upper(SHOW_ANSWER) like upper('%${showAnswer}%')
+		</if>
+		<if test="showScore!=null" >
+			AND upper(SHOW_SCORE) like upper('%${showScore}%')
+		</if>
+		<if test="savePage!=null" >
+			AND upper(SAVE_PAGE) like upper('%${savePage}%')
+		</if>
+		<if test="isUnify!=null" >
+			AND upper(IS_UNIFY) like upper('%${isUnify}%')
+		</if>
+		<if test="memo!=null" >
+			AND upper(MEMO) like upper('%${memo}%')
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="paperCount!=null" >
+			AND PAPER_COUNT=#{paperCount}
+		</if>
+		<if test="generateCycle!=null" >
+			AND GENERATE_CYCLE=#{generateCycle}
+		</if>
+		<if test="type!=null" >
+			AND upper(TYPE) like upper('%${type}%')
+		</if>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="name!=null" >
+			AND upper(NAME) like upper('%${name}%')
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_POLICY,EXAM_SCOPE_POLICY_REL
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.time!=null" >
+			AND TIME=#{bo.time}
+		</if>
+		<if test="bo.totalScore!=null" >
+			AND TOTAL_SCORE=#{bo.totalScore}
+		</if>
+		<if test="bo.passScore!=null" >
+			AND PASS_SCORE=#{bo.passScore}
+		</if>
+		<if test="bo.examTimeStart!=null" >
+			AND EXAM_TIME_START=#{bo.examTimeStart}
+		</if>
+		<if test="bo.examTimeEnd!=null" >
+			AND EXAM_TIME_END=#{bo.examTimeEnd}
+		</if>
+		<if test="bo.showAnswer!=null" >
+			AND upper(SHOW_ANSWER) like upper('%${bo.showAnswer}%')
+		</if>
+		<if test="bo.showScore!=null" >
+			AND upper(SHOW_SCORE) like upper('%${bo.showScore}%')
+		</if>
+		<if test="bo.savePage!=null" >
+			AND upper(SAVE_PAGE) like upper('%${bo.savePage}%')
+		</if>
+		<if test="bo.isUnify!=null" >
+			AND upper(IS_UNIFY) like upper('%${bo.isUnify}%')
+		</if>
+		<if test="bo.memo!=null" >
+			AND upper(MEMO) like upper('%${bo.memo}%')
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.paperCount!=null" >
+			AND PAPER_COUNT=#{bo.paperCount}
+		</if>
+		<if test="bo.generateCycle!=null" >
+			AND GENERATE_CYCLE=#{bo.generateCycle}
+		</if>
+		<if test="bo.type!=null" >
+			AND upper(TYPE) like upper('%${bo.type}%')
+		</if>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.name!=null" >
+			AND upper(NAME) like upper('%${bo.name}%')
+		</if>
+		<if test="bo.scopeId!=null" >
+			AND ID=EXAM_SCOPE_POLICY_REL.POLICY_ID
+			AND EXAM_SCOPE_POLICY_REL.SCOPE_ID=#{bo.scopeId}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="getPolicyWithAutoPaper" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_POLICY
+			WHERE
+				ENABLED_FLAG=1
+				AND GENERATE_CYCLE>0
+				AND TYPE='AUTO'
+				AND EXAM_TIME_START<=SYSDATE
+				AND EXAM_TIME_END>=SYSDATE
+		]]>
+			ORDER BY ID
+	</select>
+	
+	<select id="getPolicyByScopeIds" parameterType="java.util.List" resultMap="result">
+		SELECT 
+			ID,
+			NAME,
+			TIME,
+			TOTAL_SCORE,
+			PASS_SCORE,
+			EXAM_TIME_START,
+			EXAM_TIME_END,
+			SHOW_ANSWER,
+			SHOW_SCORE,
+			SAVE_PAGE,
+			IS_UNIFY,
+			MEMO,
+			LAST_UPDATE_DATE,
+			LAST_UPDATED_BY,
+			CREATION_DATE,
+			CREATED_BY,
+			ENABLED_FLAG,
+			PAPER_COUNT,
+			GENERATE_CYCLE,
+			TYPE,
+			SCOPE_ID
+		FROM 
+			EXAM_POLICY, EXAM_SCOPE_POLICY_REL
+		WHERE
+			ENABLED_FLAG=1 AND EXAM_POLICY.ID=EXAM_SCOPE_POLICY_REL.POLICY_ID AND SCOPE_ID IN 
+			<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+	               	#{id}
+	        </foreach>
+		ORDER BY ID
+	</select>
+	
+	<select id="getPolicyByPaperGuid" parameterType="java.lang.String" resultMap="result">
+		SELECT 
+			EPY.ID,
+			EPY.NAME,
+			EPY.TIME,
+			EPY.TOTAL_SCORE,
+			EPY.PASS_SCORE,
+			EPY.EXAM_TIME_START,
+			EPY.EXAM_TIME_END,
+			EPY.SHOW_ANSWER,
+			EPY.SHOW_SCORE,
+			EPY.SAVE_PAGE,
+			EPY.IS_UNIFY,
+			EPY.MEMO,
+			EPY.LAST_UPDATE_DATE,
+			EPY.LAST_UPDATED_BY,
+			EPY.CREATION_DATE,
+			EPY.CREATED_BY,
+			EPY.ENABLED_FLAG,
+			EPY.PAPER_COUNT,
+			EPY.GENERATE_CYCLE,
+			EPY.TYPE
+		FROM 
+			EXAM_POLICY EPY, EXAM_PAPER EP
+		WHERE
+			EPY.ID=EP.EXAM_POLICY_ID AND EP.GUID=#{guid}
+	</select>
+</mapper>
+
+
+

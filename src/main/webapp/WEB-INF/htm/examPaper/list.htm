@@ -1,0 +1,39 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" id="checkboxAll" value="0" onclick="selectForAll(this)"/></th>
+			<th>序号</th>
+		<th>&nbsp;GUID</th>
+		<th>&nbsp;是否有效</th>
+		<th>&nbsp;是否使用</th>
+		<th>&nbsp;考试时间</th>
+		<th>&nbsp;试卷总分</th>
+		<th>&nbsp;及格分数</th>
+
+			<th>查看</th>
+			<!-- <th>编辑</th> -->
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;<input name="checkbox${item.id}" value="${item.id?c!0}" type="checkbox" onclick="selectOne(this)" /></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+			<td>&nbsp;${item.guid}</td>
+			<td>&nbsp;${item.status}</td>
+			<td>&nbsp;${item.used}</td>
+			<td>&nbsp;${item.time}</td>
+			<td>&nbsp;${item.totleScore}</td>
+			<td>&nbsp;${item.passScore}</td>
+			<td><a class="f_tblist_show"  href="examPaper!details.action?examPaper.id=${item.id}" ><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<!-- <td><a class="f_tblist_edit"  href="core/major/major-input.html"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td> -->
+			<td><a class="f_single_delete" href="examPaper!remove.action?examPaper.id=${item.id}"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="10"/>
+	</tbody>	
+</table>
+

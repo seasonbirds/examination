@@ -1,0 +1,69 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<div class="input_box">
+	<form id="questionForm">
+		<div class="box_title">查看试题</div>
+		<div class="box_content">
+			<input type="hidden" id="examQuestionId" name="examQuestion.id" value="${examQuestion.id?c!0}">
+			<table class="tb_input" >
+				<tbody>
+					<tr>
+						<th>题干</th>
+						<td>
+							${examQuestion.content!}
+						</td>
+					</tr>
+					<tr>
+						<th>题目代码</th>
+						<td>
+							${examQuestion.code!}
+						</td>
+					</tr>					
+					<tr>
+						<th>题目类型</th>
+						<td>
+							${resourceBundle("QuestionType."+examQuestion.type)}
+						</td>
+					</tr>
+					<tr>
+						<th>题目难度</th>
+						<td>
+							${resourceBundle("QuestionLevel."+examQuestion.lev)}
+						</td>
+					</tr> 
+					<tr>
+						<th>题目范围</th>
+						<td>
+							${resourceBundle("QuestionRangeType."+examQuestion.rangeType)}
+						</td>
+					</tr> 
+					<tr>
+					<th>课程<strong class="red">*</strong></th>
+					<td>
+						${courseName!}
+					</td>
+					</tr>
+					<tr>
+						<th>知识点</th>
+						<td>
+							${pointName!} 
+						</td>
+					</tr>
+					<tr>
+					<th>答案<br/>
+					(背景行,为正确答案)</th>
+					<td>
+						<ul class="answers">
+						 <#if examQuestion.answerList??>
+							 <#list examQuestion.answerList as item>
+							 	<li <#if item.valid=='1'>class="right"</#if>>${item.answerIdx!}、${item.content!}
+							 	</li>
+							 </#list>
+						 </#if>
+						</ul>
+					</td>
+					</tr>
+				</tbody>
+			</table>
+		</div> 
+	</form>
+</div> 

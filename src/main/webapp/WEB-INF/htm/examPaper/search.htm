@@ -1,0 +1,109 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/examPaper!query.action">
+<input type="hidden" name="examPaper.scopeId" id="examPaper.scopeId" value="${examPaper.scopeId!}" >
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>GUID：</th>
+				<td colspan="3">&nbsp;<input type="text" id="examPaper.guid"/></td>
+			</tr>
+			<tr>
+				<th>是否有效：</th>
+				<td>&nbsp;<@enum.select id="examPaper.status" type="com.vnetoo.common.enums.Bool" default="" header="true"/>
+				<th>是否使用：</th>
+				<td>&nbsp;<@enum.select id="examPaper.used" type="com.vnetoo.common.enums.Bool" default="" header="true"/></td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	试卷表列表
+	<span class="operate_list"> 
+		<!-- <a class="bt_blue_30 f_add_operate" href="javascript:void(0)">添加</a> -->
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a> 		
+		<a class="bt_blue_30 f_batch_operate" href="javascript:void(0)" id="exportWord" >导出（word格式）</a> 
+	</span>
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "list.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+
+$(function(){
+	//$('.f_add_operate').colorbox();
+	$('.f_batch_delete').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要删除的记录"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+		}		
+	});
+	$('.f_batch_delete').jConfirmAction({
+			question:"确定删除选中的 记录吗？",
+			yesAnswer:"是",cancelAnswer:"否",
+			yesAction:function($this){
+				jQueryPost("${webroot}/examPaper!batchRemove.action",{
+					"appScope.ids":selectList.getData()
+					},
+					function(result,msg){
+						if(result==0){
+							jAlert("删除试卷成功！");				
+							pageQuery();						
+						}else{
+							jAlertError("删除试卷失败！");
+						}
+				});	
+			}
+	});
+
+	$('#exportWord').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要导出的试卷"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");
+		}else{
+			var param = jQuery.param({"examPaper.ids":selectList.getData()},true);
+			//window.open("${webroot}/examPaper!batchDownloadPaper.action?"+param,"newwindow");
+			window.location.href = "${webroot}/examPaper!batchDownloadPaper.action?"+param;
+		}		
+	});
+})
+//-->
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysRole">
+	
+	<resultMap id="result" type="SysRole">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="name" column="NAME" jdbcType="VARCHAR"/>
+		<result property="parentId" column="PARENT_ID" jdbcType="NUMERIC"/>
+		<result property="description" column="DESCRIPTION" jdbcType="VARCHAR"/>
+		<result property="status" column="STATUS" jdbcType="VARCHAR"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="SysRole">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_SYS_ROLE.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO SYS_ROLE(
+				ID,
+				NAME,
+				PARENT_ID,
+				DESCRIPTION,
+				STATUS,
+				ENABLED_FLAG,
+				CREATED_BY,
+				CREATION_DATE,
+				LAST_UPDATED_BY,
+				LAST_UPDATE_DATE
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{name,jdbcType=VARCHAR},
+				#{parentId,jdbcType=NUMERIC},
+				#{description,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				1  ,
+				#{createdBy,jdbcType=NUMERIC},
+				SYSDATE  ,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE  
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="SysRole">
+		<![CDATA[
+			UPDATE SYS_ROLE SET 
+				NAME=#{name,jdbcType=VARCHAR},
+				PARENT_ID=#{parentId,jdbcType=NUMERIC},
+				DESCRIPTION=#{description,jdbcType=VARCHAR},
+				STATUS=#{status,jdbcType=VARCHAR},
+				LAST_UPDATED_BY=#{lastUpdatedBy,jdbcType=NUMERIC},
+				LAST_UPDATE_DATE=SYSDATE
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE SYS_ROLE SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM SYS_ROLE WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_ROLE
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="SysRole"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_ROLE			
+		]]>
+		<where>			
+			ENABLED_FLAG=1			
+			<if test="id!=null" >
+				AND ID=#{id}
+			</if>
+			<if test="name!=null" >
+				AND UPPER(NAME) like UPPER(CONCAT(CONCAT('%', #{name}), '%'))
+			</if>
+			<if test="parentId!=null" >
+				AND PARENT_ID=#{parentId}
+			</if>
+			<if test="description!=null" >
+				AND UPPER(DESCRIPTION) like UPPER(CONCAT(CONCAT('%', #{description}), '%'))
+			</if>
+			<if test="status!=null" >
+				AND UPPER(STATUS) like UPPER(CONCAT(CONCAT('%', #{status}), '%'))
+			</if>
+			<if test="enabledFlag!=null" >
+				AND ENABLED_FLAG=#{enabledFlag}
+			</if>
+			<if test="createdBy!=null" >
+				AND CREATED_BY=#{createdBy}
+			</if>
+			<if test="creationDate!=null" >
+				AND CREATION_DATE=#{creationDate}
+			</if>
+			<if test="lastUpdatedBy!=null" >
+				AND LAST_UPDATED_BY=#{lastUpdatedBy}
+			</if>
+			<if test="lastUpdateDate!=null" >
+				AND LAST_UPDATE_DATE=#{lastUpdateDate}
+			</if>
+		</where>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				SYS_ROLE			
+		]]>
+		<where>			
+			ENABLED_FLAG=1			
+			<if test="bo.id!=null" >
+				AND ID=#{bo.id}
+			</if>
+			<if test="bo.name!=null" >
+				AND UPPER(NAME) like UPPER(CONCAT(CONCAT('%', #{bo.name}), '%'))
+			</if>
+			<if test="bo.parentId!=null" >
+				AND PARENT_ID=#{bo.parentId}
+			</if>
+			<if test="bo.description!=null" >
+				AND UPPER(DESCRIPTION) like UPPER(CONCAT(CONCAT('%', #{bo.description}), '%'))
+			</if>
+			<if test="bo.status!=null" >
+				AND UPPER(STATUS) like UPPER(CONCAT(CONCAT('%', #{bo.status}), '%'))
+			</if>
+			<if test="bo.statusForQuery != null" >
+				AND upper(STATUS) IN	
+				<foreach item="status" index="index" collection="bo.statusForQuery" open="(" separator="," close=")">
+					'${status}'
+				</foreach>
+			</if>
+			<if test="bo.enabledFlag!=null" >
+				AND ENABLED_FLAG=#{bo.enabledFlag}
+			</if>
+			<if test="bo.createdBy!=null" >
+				AND CREATED_BY=#{bo.createdBy}
+			</if>
+			<if test="bo.creationDate!=null" >
+				AND CREATION_DATE=#{bo.creationDate}
+			</if>
+			<if test="bo.lastUpdatedBy!=null" >
+				AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+			</if>
+			<if test="bo.lastUpdateDate!=null" >
+				AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+			</if>
+		</where>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="findRoleByUser" parameterType="java.lang.Integer"
+		resultMap="result">
+		<![CDATA[
+		SELECT R.* FROM SYS_USER_ROLE_REL RE,SYS_ROLE R WHERE RE.USER_ID=#{id} AND RE.ROLE_ID=R.ID
+		]]>
+	</select>
+	
+	<insert id="insertUserRoleRel" parameterType="java.util.Map">
+	    <![CDATA[
+			INSERT INTO SYS_USER_ROLE_REL(
+				USER_ID,
+				ROLE_ID
+			)VALUES(
+				#{userId,jdbcType=NUMERIC},
+				#{roleId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+</mapper>
+
+
+

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysUser">
+	
+	<resultMap id="result" type="SysUser">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="acct" column="ACCT" jdbcType="VARCHAR"/>
+		<result property="pwd" column="PWD" jdbcType="VARCHAR"/>
+		<result property="realName" column="REAL_NAME" jdbcType="VARCHAR"/>
+		<result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+		<result property="email" column="EMAIL" jdbcType="VARCHAR"/>
+		<result property="emailActive" column="EMAIL_ACTIVE" jdbcType="VARCHAR"/>
+		<result property="status" column="STATUS" jdbcType="VARCHAR"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="logins" column="LOGINS" jdbcType="NUMERIC"/>
+		<result property="lastLoginTime" column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP"/>
+		<result property="nickname" column="NICKNAME" jdbcType="VARCHAR"/>
+		<result property="errortimes" column="ERRORTIMES" jdbcType="NUMERIC"/>
+		<result property="logintime" column="LOGINTIME" jdbcType="TIMESTAMP"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="SysUser">
+	    <![CDATA[
+			INSERT INTO SYS_USER(
+				ID,
+				ACCT,
+				PWD,
+				REAL_NAME,
+				MEMO,
+				EMAIL,
+				EMAIL_ACTIVE,
+				STATUS,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				LOGINS,
+				LAST_LOGIN_TIME,
+				NICKNAME,
+				ERRORTIMES,
+				LOGINTIME
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{acct,jdbcType=VARCHAR},
+				#{pwd,jdbcType=VARCHAR},
+				#{realName,jdbcType=VARCHAR},
+				#{memo,jdbcType=VARCHAR},
+				#{email,jdbcType=VARCHAR},
+				#{emailActive,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1,
+				#{logins,jdbcType=NUMERIC},
+				SYSDATE,
+				#{nickname,jdbcType=VARCHAR},
+				#{errortimes,jdbcType=NUMERIC},
+				#{logintime,jdbcType=TIMESTAMP}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="SysUser">
+		<![CDATA[
+			UPDATE SYS_USER SET 
+				ID=#id:NUMERIC#,
+				ACCT=#acct:VARCHAR#,
+				PWD=#pwd:VARCHAR#,
+				REAL_NAME=#realName:VARCHAR#,
+				MEMO=#memo:VARCHAR#,
+				EMAIL=#email:VARCHAR#,
+				EMAIL_ACTIVE=#emailActive:VARCHAR#,
+				STATUS=#status:VARCHAR#,
+				LAST_UPDATED_BY=#lastUpdatedBy:NUMERIC#,
+				CREATED_BY=#createdBy:NUMERIC#,
+				LOGINS=#logins:NUMERIC#,
+				NICKNAME=#nickname:VARCHAR#,
+				ERRORTIMES=#errortimes:NUMERIC#,
+				LOGINTIME=#logintime:TIMESTAMP#
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE SYS_USER SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM SYS_USER WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_USER
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="SysUser"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_USER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="acct!=null" >
+			AND ACCT=#{acct}
+		</if>
+		<if test="pwd!=null" >
+			AND upper(PWD) like upper('%${pwd}%')
+		</if>
+		<if test="realName!=null" >
+			AND upper(REAL_NAME) like upper('%${realName}%')
+		</if>
+		<if test="memo!=null" >
+			AND upper(MEMO) like upper('%${memo}%')
+		</if>
+		<if test="email!=null" >
+			AND upper(EMAIL) like upper('%${email}%')
+		</if>
+		<if test="emailActive!=null" >
+			AND upper(EMAIL_ACTIVE) like upper('%${emailActive}%')
+		</if>
+		<if test="status!=null" >
+			AND upper(STATUS) like upper('%${status}%')
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="logins!=null" >
+			AND LOGINS=#{logins}
+		</if>
+		<if test="lastLoginTime!=null" >
+			AND LAST_LOGIN_TIME=#{lastLoginTime}
+		</if>
+		<if test="nickname!=null" >
+			AND upper(NICKNAME) like upper('%${nickname}%')
+		</if>
+		<if test="errortimes!=null" >
+			AND ERRORTIMES=#{errortimes}
+		</if>
+		<if test="logintime!=null" >
+			AND LOGINTIME=#{logintime}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				SYS_USER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.acct!=null" >
+			AND upper(ACCT) like upper('%${bo.acct}%')
+		</if>
+		<if test="bo.pwd!=null" >
+			AND upper(PWD) like upper('%${bo.pwd}%')
+		</if>
+		<if test="bo.realName!=null" >
+			AND upper(REAL_NAME) like upper('%${bo.realName}%')
+		</if>
+		<if test="bo.memo!=null" >
+			AND upper(MEMO) like upper('%${bo.memo}%')
+		</if>
+		<if test="bo.email!=null" >
+			AND upper(EMAIL) like upper('%${bo.email}%')
+		</if>
+		<if test="bo.emailActive!=null" >
+			AND upper(EMAIL_ACTIVE) like upper('%${bo.emailActive}%')
+		</if>
+		<if test="bo.status!=null" >
+			AND upper(STATUS) like upper('%${bo.status}%')
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.logins!=null" >
+			AND LOGINS=#{bo.logins}
+		</if>
+		<if test="bo.lastLoginTime!=null" >
+			AND LAST_LOGIN_TIME=#{bo.lastLoginTime}
+		</if>
+		<if test="bo.nickname!=null" >
+			AND upper(NICKNAME) like upper('%${bo.nickname}%')
+		</if>
+		<if test="bo.errortimes!=null" >
+			AND ERRORTIMES=#{bo.errortimes}
+		</if>
+		<if test="bo.logintime!=null" >
+			AND LOGINTIME=#{bo.logintime}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="checkPasswd" parameterType="com.vnetoo.system.user.bo.SysUser"
+		resultMap="result">
+		<![CDATA[
+		SELECT * FROM EXAM.SYS_USER WHERE ACCT=#{acct} AND PWD=#{pwd}
+		]]>
+	</select>
+	
+</mapper>
+
+
+

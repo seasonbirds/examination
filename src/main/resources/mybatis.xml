@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="SysUser" type="com.vnetoo.system.user.bo.SysUser"/>
+		<typeAlias alias="SysRole" type="com.vnetoo.system.role.bo.SysRole"/>
+		<typeAlias alias="SysRight" type="com.vnetoo.system.right.bo.SysRight"/>
+		<typeAlias alias="ExamPolicy" type="com.vnetoo.examination.policy.bo.ExamPolicy"/>
+		<typeAlias alias="ExamPolicyDetail" type="com.vnetoo.examination.policy.bo.ExamPolicyDetail"/>
+		<typeAlias alias="ExamQuestion" type="com.vnetoo.examination.question.bo.ExamQuestion"/>
+		<typeAlias alias="ExamKeyPoint" type="com.vnetoo.examination.keypoint.bo.ExamKeyPoint"/>
+		<typeAlias alias="ExamAnswer" type="com.vnetoo.examination.question.bo.ExamAnswer"/>
+		<typeAlias alias="AppCourse" type="com.vnetoo.examination.app.bo.AppCourse"/>
+		<typeAlias alias="AppScope" type="com.vnetoo.examination.app.bo.AppScope"/>
+		<typeAlias alias="ExamPaper" type="com.vnetoo.examination.paper.bo.ExamPaper"/>
+		<typeAlias alias="ScopeCourseRel" type="com.vnetoo.examination.app.bo.ScopeCourseRel"/>
+		<typeAlias alias="ScopeKeyPointRel" type="com.vnetoo.examination.app.bo.ScopeKeyPointRel"/>
+		<typeAlias alias="ScopePolicyRel" type="com.vnetoo.examination.app.bo.ScopePolicyRel"/>
+		<typeAlias alias="PaperQuestionRel" type="com.vnetoo.examination.paper.bo.PaperQuestionRel"/>
+		<typeAlias alias="PaperQuestion" type="com.vnetoo.examination.paper.bo.PaperQuestion"/>
+		<typeAlias alias="ExamStudentAnswer" type="com.vnetoo.examination.paper.bo.ExamStudentAnswer"/>
+		<typeAlias alias="ExamStudentAnswerDetail" type="com.vnetoo.examination.paper.bo.ExamStudentAnswerDetail"/>
+		<typeAlias alias="ScopeUserRel" type="com.vnetoo.examination.app.bo.ScopeUserRel"/>
+		<typeAlias alias="MonitorInfo" type="com.vnetoo.examination.examMonitor.bo.MonitorInfo"/>
+		<typeAlias alias="ExamReviewInfo" type="com.vnetoo.examination.examReview.bo.ExamReviewInfo"/>
+		<typeAlias alias="BlobStringTypeHandler" type="com.vnetoo.common.typeHandler.BlobStringTypeHandler"/>
+	</typeAliases>
+	
+	<typeHandlers>
+		<typeHandler javaType="java.lang.String" jdbcType="BLOB" handler="BlobStringTypeHandler" />
+	</typeHandlers>
+	<plugins>
+		<plugin interceptor="com.vnetoo.common.dao.PageInterceptor">
+			<property name="pageHandler" value="com.vnetoo.common.dao.OraclePageHandler"/>
+		</plugin>
+	</plugins>
+	<!-- 
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC"></transactionManager>
+			<dataSource type="POOLED">				
+				<property name="driver" value="oracle.jdbc.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:citysea"/>
+		<property name="username" value="EXAM"/>
+		<property name="password" value="123456"/>
+			</dataSource> 
+		</environment>
+	</environments>
+	 -->
+	<mappers>
+		<mapper resource="/mapper/SysUser.xml"/>
+		<mapper resource="/mapper/SysRole.xml"/>
+		<mapper resource="/mapper/SysRight.xml"/>
+		<mapper resource="/mapper/ExamPolicy.xml"/>	
+		<mapper resource="/mapper/ExamPolicyDetail.xml"/>
+		<mapper resource="/mapper/ExamQuestion.xml"/>
+		<mapper resource="/mapper/ExamKeyPoint.xml"/>
+		<mapper resource="/mapper/ExamAnswer.xml"/>
+		<mapper resource="/mapper/AppCourse.xml"/>
+		<mapper resource="/mapper/AppScope.xml"/>
+		<mapper resource="/mapper/ExamPaper.xml"/>
+		<mapper resource="/mapper/ScopeCourseRel.xml"/>
+		<mapper resource="/mapper/ScopeKeyPointRel.xml"/>
+		<mapper resource="/mapper/ScopePolicyRel.xml"/>
+		<mapper resource="/mapper/PaperQuestionRel.xml"/>
+		<mapper resource="/mapper/ExamStudentAnswer.xml"/>
+		<mapper resource="/mapper/ExamStudentAnswerDetail.xml"/>
+		<mapper resource="/mapper/ScopeUserRel.xml"/>
+		<mapper resource="/mapper/MonitorInfo.xml"/>
+		<mapper resource="/mapper/ExamReviewInfo.xml"/>
+	</mappers>
+	
+	
+	
+</configuration>

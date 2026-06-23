@@ -1,0 +1,155 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:spring*.xml</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>ignoreAuthUrl</param-name>
+		<param-value>/examination/login.action,/examination/index.jsp,/examination/login_agent.html</param-value>
+	</context-param>
+	
+	<listener>
+		<listener-class>com.vnetoo.common.view.ServletContextListener</listener-class>
+	</listener>
+	
+	<!-- ======================== 单点登录开始 ======================== -->
+	<context-param>  
+	    <param-name>casServerLogoutUrl</param-name>
+	    <param-value>http://localhost/vnetoo-cas/logout</param-value>  
+	</context-param>  
+	<context-param>  
+	    <param-name>casLogoutUrl</param-name>  
+	    <param-value>http://localhost/vnetoo-cas/login</param-value>  
+	</context-param> 
+	<filter>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>CAS Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>http://localhost/examination/login.action</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://localhost</param-value>
+		</init-param>
+	</filter>	
+	<filter-mapping>
+		<filter-name>CAS Filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS Filter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>
+			org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>http://localhost/vnetoo-cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://localhost</param-value>
+		</init-param>
+		<init-param>
+			<param-name>assertionHandler</param-name>
+			<param-value>com.vnetoo.examination.AssertionHandler</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<!-- ======================== 单点登录结束 ======================== --> 
+	<filter>
+		<filter-name>ipAddrLimitAndAuthFilter</filter-name>
+		<filter-class>com.vnetoo.webservice.IpAddrLimitAndAuthFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ipAddrLimitAndAuthFilter</filter-name>
+		<url-pattern>/services/*</url-pattern>
+	</filter-mapping>
+	<!-- 
+	<filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/services/*</url-pattern>
+    </filter-mapping>
+	 -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>p3pFilter</filter-name>
+		<filter-class>com.vnetoo.examination.P3PFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>p3pFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 验证码 -->
+	<servlet>
+		<servlet-name>ValidateCodeServlet</servlet-name>
+		<servlet-class>com.vnetoo.common.view.ValidateCodeServlet</servlet-class>
+		<init-param>
+			<!-- 验证码图片宽度 -->
+			<param-name>width</param-name>
+			<param-value>65</param-value>
+		</init-param>
+		<init-param>
+			<!-- 验证码图片高度 -->
+			<param-name>height</param-name>
+			<param-value>20</param-value>
+		</init-param>
+		<init-param>
+			<!-- 验证码数字的数目 -->
+			<param-name>codeCount</param-name>
+			<param-value>5</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ValidateCodeServlet</servlet-name>
+		<url-pattern>/validateCodeServlet</url-pattern>
+	</servlet-mapping>
+	
+	<listener>
+		<listener-class>com.vnetoo.examination.ExaminationContextListener</listener-class>
+	</listener>
+</web-app>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamPaper">
+	
+	<resultMap id="result" type="ExamPaper">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="examPolicyId" column="EXAM_POLICY_ID" jdbcType="NUMERIC"/>
+		<result property="paperUrl" column="PAPER_URL" jdbcType="VARCHAR"/>
+		<result property="guid" column="GUID" jdbcType="VARCHAR"/>
+		<result property="status" column="STATUS" jdbcType="VARCHAR"/>
+		<result property="used" column="USED" jdbcType="VARCHAR"/>
+		<result property="updateDate" column="UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="updatedBy" column="UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="time" column="TIME" jdbcType="NUMERIC"/>
+		<result property="totleScore" column="TOTLE_SCORE" jdbcType="NUMERIC"/>
+		<result property="passScore" column="PASS_SCORE" jdbcType="NUMERIC"/>	
+	</resultMap>
+	
+	<resultMap id="paperQuestionResult" type="PaperQuestion">
+		<result property="questionId" column="ID" jdbcType="NUMERIC"/>
+		<result property="questionContent" column="CONTENT" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="questionType" column="TYPE" jdbcType="VARCHAR"/>
+		<result property="questionScore" column="SCORE" jdbcType="NUMERIC"/>
+	</resultMap>
+	
+	<resultMap id="QuestionAnswerResult" type="com.vnetoo.examination.paper.bo.QuestionAnswer">
+		<result property="questionId" column="QUESTIONID" jdbcType="NUMERIC"/>
+		<result property="answerId" column="ANSWERID" jdbcType="NUMERIC"/>
+		<result property="score" column="SCORE" jdbcType="NUMERIC"/>
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamPaper">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_PAPER.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_PAPER(
+				ID,
+				EXAM_POLICY_ID,
+				PAPER_URL,
+				GUID,
+				STATUS,
+				USED,
+				UPDATE_DATE,
+				UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				TIME,
+				TOTLE_SCORE,
+				PASS_SCORE
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{examPolicyId,jdbcType=NUMERIC},
+				#{paperUrl,jdbcType=VARCHAR},
+				#{guid,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				#{used,jdbcType=VARCHAR},
+				SYSDATE,
+				#{updatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{time,jdbcType=NUMERIC},
+				#{totleScore,jdbcType=NUMERIC},
+				#{passScore,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamPaper">
+		<![CDATA[UPDATE EXAM_PAPER SET UPDATED_BY=#{updatedBy},UPDATE_DATE=SYSDATE]]>
+		<if test="examPolicyId!=null" >
+			,EXAM_POLICY_ID=#{examPolicyId}
+		</if>
+		<if test="paperUrl!=null" >
+			,PAPER_URL=#{paperUrl}
+		</if>
+		<if test="guid!=null" >
+			,GUID=#{guid}
+		</if>
+		<if test="status!=null" >
+			,STATUS=#{status}
+		</if>
+		<if test="used!=null" >
+			,USED=#{used}
+		</if>
+		<if test="enabledFlag!=null" >
+			,ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="time!=null" >
+			,TIME=#{time}
+		</if>
+		<if test="totleScore!=null" >
+			,TOTLE_SCORE=#{totleScore}
+		</if>
+		<if test="totleScore!=null" >
+			,PASS_SCORE=#{totleScore}
+		</if>
+		WHERE
+			ID=#{id}
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_PAPER SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_PAPER WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_PAPER
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamPaper"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_PAPER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="examPolicyId!=null" >
+			AND EXAM_POLICY_ID=#{examPolicyId}
+		</if>
+		<if test="paperUrl!=null" >
+			AND upper(PAPER_URL) like upper('%${paperUrl}%')
+		</if>
+		<if test="guid!=null" >
+			AND upper(GUID) like upper('%${guid}%')
+		</if>
+		<if test="status!=null" >
+			AND upper(STATUS) like upper('%${status}%')
+		</if>
+		<if test="used!=null" >
+			AND upper(USED) like upper('%${used}%')
+		</if>
+		<if test="updateDate!=null" >
+			AND UPDATE_DATE=#{updateDate}
+		</if>
+		<if test="updatedBy!=null" >
+			AND UPDATED_BY=#{updatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="time!=null" >
+			AND TIME=#{time}
+		</if>
+		<if test="totleScore!=null" >
+			AND TOTLE_SCORE=#{totleScore}
+		</if>
+		<if test="passScore!=null" >
+			AND PASS_SCORE=#{passScore}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_PAPER,EXAM_SCOPE_POLICY_REL
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.examPolicyId!=null" >
+			AND EXAM_POLICY_ID=#{bo.examPolicyId}
+		</if>
+		<if test="bo.paperUrl!=null" >
+			AND upper(PAPER_URL) like upper('%${bo.paperUrl}%')
+		</if>
+		<if test="bo.guid!=null" >
+			AND upper(GUID) like upper('%${bo.guid}%')
+		</if>
+		<if test="bo.status!=null" >
+			AND upper(STATUS) like upper('%${bo.status}%')
+		</if>
+		<if test="bo.used!=null" >
+			AND upper(USED) like upper('%${bo.used}%')
+		</if>
+		<if test="bo.updateDate!=null" >
+			AND UPDATE_DATE=#{bo.updateDate}
+		</if>
+		<if test="bo.updatedBy!=null" >
+			AND UPDATED_BY=#{bo.updatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.time!=null" >
+			AND TIME=#{bo.time}
+		</if>
+		<if test="bo.totleScore!=null" >
+			AND TOTLE_SCORE=#{bo.totleScore}
+		</if>
+		<if test="bo.passScore!=null" >
+			AND PASS_SCORE=#{bo.passScore}
+		</if>
+		<if test="bo.scopeId!=null" >
+			AND EXAM_SCOPE_POLICY_REL.POLICY_ID=EXAM_PAPER.EXAM_POLICY_ID
+			AND EXAM_SCOPE_POLICY_REL.SCOPE_ID=#{bo.scopeId}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="getQuestionByPaperId" parameterType="java.lang.Integer" resultMap="paperQuestionResult">
+		SELECT 
+			EXAM_QUESTION.ID,CONTENT,EXAM_QUESTION.TYPE,EXAM_PAPER_QUESTION_REL.SCORE
+		FROM 
+			EXAM_PAPER,EXAM_PAPER_QUESTION_REL,EXAM_QUESTION
+		WHERE
+			EXAM_PAPER.ID=EXAM_PAPER_QUESTION_REL.PAPERS_ID
+			AND EXAM_PAPER_QUESTION_REL.QUESTION_ID=EXAM_QUESTION.ID
+			AND EXAM_PAPER.ID=#{paperId}
+		ORDER BY EXAM_QUESTION.ID
+	</select>
+	
+	<select id="getPaperIdsByScopeId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT 
+			EXAM_PAPER.ID
+		FROM 
+			EXAM_PAPER,EXAM_SCOPE_POLICY_REL
+		WHERE
+			EXAM_PAPER.EXAM_POLICY_ID=EXAM_SCOPE_POLICY_REL.POLICY_ID
+			AND EXAM_SCOPE_POLICY_REL.SCOPE_ID=#{scopeId}
+			AND EXAM_PAPER.ENABLED_FLAG=1 AND EXAM_PAPER.STATUS='YES'
+		ORDER BY EXAM_PAPER.ID
+	</select>
+	
+	<select id="getAnswersByPaperId" parameterType="java.lang.Integer" resultMap="QuestionAnswerResult">
+		SELECT 
+			EXAM_ANSWER.ID AS ANSWERID,EXAM_ANSWER.QUESTION_ID AS QUESTIONID,EXAM_PAPER_QUESTION_REL.SCORE
+		FROM 
+			EXAM_ANSWER,EXAM_PAPER_QUESTION_REL,EXAM_QUESTION
+		WHERE
+			EXAM_QUESTION."ID"=EXAM_ANSWER.QUESTION_ID AND
+			EXAM_QUESTION."ID"=EXAM_PAPER_QUESTION_REL.QUESTION_ID AND
+			EXAM_QUESTION.ENABLED_FLAG=1 AND
+			EXAM_ANSWER.ENABLED_FLAG=1 AND
+			(EXAM_QUESTION."TYPE"='SINGLE' OR EXAM_QUESTION."TYPE"='MULT' OR EXAM_QUESTION."TYPE"='JUDGE') AND
+			EXAM_ANSWER.VALID=1 AND
+			EXAM_PAPER_QUESTION_REL.PAPERS_ID=#{paperId}
+	</select>
+	
+</mapper>
+
+
+

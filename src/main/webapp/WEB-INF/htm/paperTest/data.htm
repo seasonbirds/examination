@@ -1,0 +1,37 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th>序号</th>
+			<th>名称</th>
+			<th>操作</th>	
+		</tr>
+	</thead>
+	<tbody>
+		<#setting number_format="#">
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;${item_index+1}</td>
+			<td>&nbsp;${item.name}</td>
+			<#if item.examStatus==-1>
+				<td>&nbsp;考试未开放</td>
+			<#elseif item.examStatus==0>
+				<td>&nbsp;考试未开始</td>
+			<#elseif item.examStatus==1>
+				<td>&nbsp;<a href="javascript:void(0)" onclick="applyExam('${item.id}',this)">参加考试</a></td>
+			<#elseif item.examStatus==2>
+				<td>&nbsp;<a href="javascript:void(0)" onclick="continueExam('${item.id}',this)">继续考试</a></td>
+			<#elseif item.examStatus==3>
+				<td>&nbsp;<a href="javascript:void(0)" onclick="showExamResult('${item.id}',this)">已交卷，查看考试结果</a></td>
+			<#elseif item.examStatus==4>
+				<td>&nbsp;<a href="javascript:void(0)" onclick="showExamResult('${item.id}',this)">未交卷，已过期，查看结果</a></td>
+			<#elseif item.examStatus==5>
+				<td>&nbsp;考试已过期</td>
+			</#if>
+		</tr>
+		</#list>
+		<@page.blank cellCount="3"/>	
+	</tbody>	
+</table>
+

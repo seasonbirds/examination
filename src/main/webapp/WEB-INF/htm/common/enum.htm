@@ -1,0 +1,24 @@
+<#macro select id,type,header,default="",disabled="">
+<select id = "${id}" name="${id}" <#if disabled=="true">disabled="disabled"</#if>>
+<#if header=="true">
+<option value="">---${resourceBundle("select.header")}---</option>
+</#if>
+<#list static[type].values() as item>
+<option value="${item}"
+<#if default==item>selected</#if>
+>${resourceBundle(type?substring(type?last_index_of(".")+1)+"."+item)}</option>
+</#list>
+</select>	
+</#macro>
+
+<#macro radio id,type,default="">
+<#list static[type].values() as item>
+<input type="radio" value="${item}" id="${id}.${item}" <#if default==item>checked</#if> name="${id}"><label for="${id}">${resourceBundle(type?substring(type?last_index_of(".")+1)+"."+item)}</label>
+</#list>
+</#macro>
+
+<#macro checkbox id,type,default="">
+<#list static[type].values() as item>
+<input type="checkbox" value="${item}" id="${id}.${item}" <#if default==item>checked</#if> name="${id}"><label for="${id}">${resourceBundle(type?substring(type?last_index_of(".")+1)+"."+item)}</label>
+</#list>
+</#macro>

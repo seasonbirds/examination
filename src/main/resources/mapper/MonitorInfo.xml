@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MonitorInfo">
+	
+	<resultMap id="result" type="MonitorInfo">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="scopeName" column="SCOPE_NAME" jdbcType="NUMERIC"/>
+		<result property="studentId" column="STUDENT_ID" jdbcType="VARCHAR"/>
+		<result property="studentAcct" column="STUDENT_ACCT" jdbcType="VARCHAR"/>
+		<result property="studentName" column="STUDENT_NAME" jdbcType="VARCHAR"/>
+		<result property="nickName" column="NICK_NAME" jdbcType="VARCHAR"/>
+		<result property="startTime" column="START_TIME" jdbcType="TIMESTAMP"/>
+		<result property="endTime" column="END_TIME" jdbcType="TIMESTAMP"/>
+		<result property="totalTime" column="TOTAL_TIME" jdbcType="TIMESTAMP"/>
+		<result property="paperId" column="PAPER_ID" jdbcType="NUMERIC"/>
+		<result property="paperName" column="PAPER_NAME" jdbcType="VARCHAR"/>
+		<result property="policyId" column="POLICY_ID" jdbcType="NUMERIC"/>
+		<result property="studentAnswerId" column="STUDENT_ANSWER_ID" jdbcType="NUMERIC"/>
+		<result property="answerQuestionIds" column="ANSWER_QUESTION_IDS" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+	</resultMap>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT
+				EAS.NAME AS SCOPE_NAME,
+				EAS.ID AS　SCOPE_ID, 
+				SU.ID AS STUDENT_ID,
+				SU.ACCT AS STUDENT_ACCT,
+				SU.REAL_NAME AS STUDENT_NAME,
+				SU.NICKNAME AS NICK_NAME,
+				ESA.ID AS STUDENT_ANSWER_ID,
+				ESA.CREATION_DATE AS START_TIME,
+				ESA.PAPERS_ID AS PAPER_ID,
+				ESA.ANSWER_ID AS ANSWER_QUESTION_IDS,
+			 	EP.EXAM_POLICY_ID AS POLICY_ID,
+			 	EPY.NAME AS PAPER_NAME,
+			 	EPY.EXAM_TIME_END AS END_TIME,
+			 	EPY.TIME AS TOTAL_TIME
+			FROM 
+				EXAM_POLICY EPY,
+				EXAM.APP_SCOPE EAS,
+				EXAM_SCOPE_POLICY_REL ESPR,
+				EXAM_PAPER EP,
+				EXAM_STUDENT_ANSWER ESA,
+				APP_SCOPE_USER_REL SUR,
+				SYS_USER SU
+			WHERE
+				EAS.ID=SUR.SCOPE_ID AND
+				EP.ID=ESA.PAPERS_ID AND 
+				SU.ID=ESA.STUDENT_ID AND 
+				SU.ID=SUR.USER_ID AND
+				ESPR.SCOPE_ID=EAS."ID" AND
+				ESPR.POLICY_ID=EP.EXAM_POLICY_ID AND
+				EPY.ID=ESPR.POLICY_ID AND
+				ESA.ENABLED_FLAG=1 AND
+				SU.ENABLED_FLAG=1 AND 
+				EP.ENABLED_FLAG=1 AND
+				EPY.EXAM_TIME_START <= SYSDATE AND
+				ESA.STATUS=0
+				
+		]]>
+		<if test="bo.studentName!=null" >
+			AND upper(SU.REAL_NAME) like upper('%${bo.studentName}%')
+		</if>
+		<if test="bo.scopeId!=null" >
+			AND EAS.ID=#{bo.scopeId}
+		</if>
+		<if test="bo.examTime!=null and bo.examTime==0" >
+			<![CDATA[AND EPY.EXAM_TIME_END < SYSDATE]]>
+		</if>
+		<if test="bo.examTime!=null and bo.examTime==1" >
+			<![CDATA[AND EPY.EXAM_TIME_END > SYSDATE]]>
+		</if>
+			ORDER BY ESA.ID<if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+</mapper>
+
+
+

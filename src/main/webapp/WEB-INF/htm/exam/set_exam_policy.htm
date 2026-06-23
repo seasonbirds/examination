@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script language="Javascript" src="${webroot}/js/jquery-1.4.2.js"></script>
+<script language="Javascript" src="${webroot}/js/examPolicy.js"></script>
+<script language="Javascript" src="${webroot}/js/My97DatePicker/WdatePicker.js"></script>
+</head>
+
+<html>
+<body>
+
+<input type="hidden" name="examPolicy.examScopeId" id="examPolicy.examScopeId" value="${examPolicy.examScopeId?c!0}"/>
+<input type="hidden" name="examPolicy.id" id="examPolicy.id" value="<#if examPolicy.id??>${examPolicy.id?c!0}</#if>"/>
+<div id="qtab1" style="overflow:auto;">
+					<div class="form">
+						<div class="tt">
+							试卷基本信息
+						</div>
+						<table cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="right">
+									试卷名称：<font color="#FF0000">*</font>
+								</td>
+								<td colspan="5">
+									<input type="text" class="tet" name="examPolicy.name" id="examPolicy.name" 
+									value="<#if examPolicy.name??>${examPolicy.name}</#if>">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									有效考试开始时间：
+								</td>
+								<td><font color="#FF0000">*</font>
+									<input type="text" class="tet" name="examPolicy.examTimeStart" id="examPolicy.examTimeStart" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+											value='<#if examPolicy.examTimeStart??>${examPolicy.examTimeStart?string("yyyy-MM-dd HH:mm:ss")}</#if>' readonly="readonly">
+								</td>
+								<td width="40" align="center">
+									
+								</td>
+								<td align="right">
+									有效考试截止时间：
+								</td>
+								<td><font color="#FF0000">*</font>
+									<input type="text" class="tet" name="examPolicy.examTimeEnd" id="examPolicy.examTimeEnd" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+												value='<#if examPolicy.examTimeEnd??>${examPolicy.examTimeEnd?string("yyyy-MM-dd HH:mm:ss")}</#if>' readonly="readonly">
+								</td>
+								<td width="40" align="center">
+									
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									试卷类型：
+								</td>
+								<td colspan="2">
+									系统随机出题
+								</td>
+								<td align="right">
+									答题时间：
+								</td>
+								<td colspan="2"><font color="#FF0000">*</font>
+									<input type="text" class="tet" id="examPolicy.time" name="examPolicy.time" 
+											value="<#if examPolicy.time??>${examPolicy.time?c}</#if>">分钟
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									试卷总分：
+								</td>
+								<td colspan="2"><font color="#FF0000">*</font>
+									<input type="text" class="tet" name="examPolicy.totalScore" id="examPolicy.totalScore" 
+											maxlength="3"	value="<#if examPolicy.totalScore??>${examPolicy.totalScore?c}</#if>">
+								</td>
+								<td align="right">
+									通过分数：
+								</td>
+								<td colspan="2"><font color="#FF0000">*</font>
+									<input type="text" class="tet" name="examPolicy.passScore" id="examPolicy.passScore" 
+											maxlength="4"	value="<#if examPolicy.passScore??>${examPolicy.passScore?c}</#if>">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="10">
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									是否显示答案：&nbsp;&nbsp;
+								</td>
+								<td colspan="2">
+									&nbsp;&nbsp;<input type="radio" value="0" name="examPolicy.showAnswer" id="examPolicy.showAnswer0" 
+									<#if !examPolicy.showAnswer?? || (examPolicy.showAnswer?? && examPolicy.showAnswer==0)>checked="checked"</#if>>不显示
+									<input type="radio" value="1" name="examPolicy.showAnswer" id="examPolicy.showAnswer1" 
+									<#if examPolicy.showAnswer?? && examPolicy.showAnswer==1>checked="checked"</#if>>显示
+								</td>
+								<td align="right">
+									是否显分数：&nbsp;&nbsp;
+								</td>
+								<td colspan="2">
+									&nbsp;&nbsp;<input type="radio" value="0" name="examPolicy.showScore" id="examPolicy.showScore0" 
+									<#if !examPolicy.showScore?? || (examPolicy.showScore?? && examPolicy.showScore==0)>checked="checked"</#if>>不显示
+									<input type="radio" value="1" name="examPolicy.showScore" id="examPolicy.showScore1" 
+									<#if examPolicy.showScore?? && examPolicy.showScore==1>checked="checked"</#if>>显示
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="5">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="6" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									考试说明：
+								</td>
+								<td colspan="5"><font color="#FF0000">*</font>
+									<textarea name="examPolicy.memo" id="examPolicy.memo" cols="50" rows="6"><#if examPolicy.memo??>${examPolicy.memo}</#if></textarea>
+								</td>
+							</tr>
+						</table>
+						<div class="tt">
+							试卷预生成设置
+						</div>
+						<table cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="right">
+									<span style="padding:0 6px"></span>预生成试卷套数：
+								</td>
+								<td>
+									<input type="text" class="tet" name="examPolicy.paperCount" id="examPolicy.paperCount" 
+												value="<#if examPolicy.paperCount??>${examPolicy.paperCount}</#if>">
+								</td>
+								<td width="40" align="center">
+									
+								</td>
+								<td align="right">
+									预生成试卷更新周期：
+								</td>
+								<td colspan="2">
+									<input type="text" class="tet" name="examPolicy.generateCycle" id="examPolicy.generateCycle" 
+												value="<#if examPolicy.generateCycle??>${examPolicy.generateCycle}</#if>">
+								</td>
+							</tr>
+						</table>
+						<div class="tt">
+							组卷策略设置
+						</div>
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+								<td>
+									<span style="padding:0 36px"></span>单选：
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									难度
+								</td>
+								<td>
+									<select class="tet1" name="examPolicy.detail_single.lev" id="examPolicy.detail_single.lev">
+									<option value="32" <#if (examPolicy.detail_single.lev)?? && examPolicy.detail_single.lev==32>selected="true"</#if>>简单</option>
+								    <option value="33" <#if (examPolicy.detail_single.lev)?? && examPolicy.detail_single.lev==33>selected="true"</#if>>中等</option>
+								    <option value="34" <#if (examPolicy.detail_single.lev)?? && examPolicy.detail_single.lev==34>selected="true"</#if>>难</option>
+									</select>
+									
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									题量
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_single.questionCount" id="examPolicy.detail_single.questionCount" 
+									value="<#if examPolicy.detail_single.questionCount??>${examPolicy.detail_single.questionCount}</#if>" size="5" maxlength="5">
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									分数
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_single.perScore" id="examPolicy.detail_single.perScore"  
+									value="<#if examPolicy.detail_single.perScore??>${examPolicy.detail_single.perScore}</#if>" size="3" maxlength="3">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="7" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span style="padding:0 36px"></span>多选：
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									难度
+								</td>
+								<td>
+									<select class="tet1" name="examPolicy.detail_mulsel.lev" id="examPolicy.detail_mulsel.lev">
+									<option value="32" <#if (examPolicy.detail_mulsel.lev)?? && examPolicy.detail_mulsel.lev==32>selected="true"</#if>>简单</option>
+								    <option value="33" <#if (examPolicy.detail_mulsel.lev)?? && examPolicy.detail_mulsel.lev==33>selected="true"</#if>>中等</option>
+								    <option value="34" <#if (examPolicy.detail_mulsel.lev)?? && examPolicy.detail_mulsel.lev==34>selected="true"</#if>>难</option>
+									</select>
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									题量
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_mulsel.questionCount" id="examPolicy.detail_mulsel.questionCount" 
+									value="<#if examPolicy.detail_mulsel.questionCount??>${examPolicy.detail_mulsel.questionCount}</#if>" size="5" maxlength="5">
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									分数
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_mulsel.perScore" id="examPolicy.detail_mulsel.perScore"  
+									value="<#if examPolicy.detail_mulsel.perScore??>${examPolicy.detail_mulsel.perScore}</#if>" size="3" maxlength="3">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="7" height="6">
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span style="padding:0 36px"></span>判断：
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									难度
+								</td>
+								<td>
+									<select class="tet1" name="examPolicy.detail_option.lev" id="examPolicy.detail_option.lev">
+									<option value="32" <#if (examPolicy.detail_option.lev)?? && examPolicy.detail_option.lev==32>selected="true"</#if>>简单</option>
+								    <option value="33" <#if (examPolicy.detail_option.lev)?? && examPolicy.detail_option.lev==33>selected="true"</#if>>中等</option>
+								    <option value="34" <#if (examPolicy.detail_option.lev)?? && examPolicy.detail_option.lev==34>selected="true"</#if>>难</option>
+									</select>
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									题量
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_option.questionCount" id="examPolicy.detail_option.questionCount" 
+									value="<#if examPolicy.detail_option.questionCount??>${examPolicy.detail_option.questionCount}</#if>" size="5" maxlength="5">
+								</td>
+								<td align="center" width="55" bgcolor="#b9dce2">
+									分数
+								</td>
+								<td>
+									<input type="text" class="tet1" name="examPolicy.detail_option.perScore" id="examPolicy.detail_option.perScore"  
+									value="<#if examPolicy.detail_option.perScore??>${examPolicy.detail_option.perScore}</#if>" size="3" maxlength="3">
+								</td>
+							</tr>
+						</table>
+					</div>
+					<table width="100%" align="center" class="tab1">
+						<tr>
+							<td width="120">
+							</td>
+							<td align="left">
+								<input type="button" class="btn1" value="保&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;存" onclick="saveExamPolicy('${webroot}/examMgr!saveExamPolicy.action')">
+							</td>
+						</tr>
+					</table>
+				</div>
+</body>
+</html>

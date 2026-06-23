@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<constant name="struts.ui.theme" value="simple" />
+	<constant name="struts.multipart.maxSize" value="10485760" />
+	<constant name="struts.multipart.saveDir" value="/tmp" />
+	<constant name="struts.action.extension" value="page,action," />
+	<constant name="struts.devMode" value="true" />
+	<!-- 指定每次请求到达，重新加载资源文件 -->
+	<constant name="struts.i18n.reload" value="false" />
+	<!-- 指定每次配置文件更改后，自动重新加载 -->
+	<constant name="struts.configuration.xml.reload" value="true" />
+	<!-- 配置由spring获取对象 
+	<constant name="struts.objectFactory" value="spring"/> -->
+	
+	<constant name="struts.convention.result.path" value="/WEB-INF/htm/" />
+	<constant name="struts.convention.action.packages" value="com.vnetoo" />    
+	<constant name="struts.convention.action.suffix" value="Action"/>
+	<constant name="struts.convention.package.locators" value="view"/>
+	
+	<package name="default" extends="struts-default">
+		<interceptors>
+			<interceptor name="validateCodeInterceptor" class="com.vnetoo.common.view.ValidateCodeInterceptor"/>
+			<interceptor name="authorityInterceptor" class="com.vnetoo.examination.AuthorityInterceptor"/>
+			<interceptor-stack name="authorityInterceptorStack">
+				<interceptor-ref name="authorityInterceptor"/>
+				<interceptor-ref name="validateCodeInterceptor"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="authorityInterceptorStack"/> 
+		<global-results>
+			<!-- <result name="ERROR">/error.jsp</result> -->
+			<result name="AUTH_ERROR">/404.jsp</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping result="ERROR" exception="java.lang.Exception" />
+		</global-exception-mappings>
+
+		<action name="examMgr" class="com.vnetoo.examination.action.ExamMgrAction">
+			<result name="ok" type="freemarker">/WEB-INF/htm/exam/set_exam_policy.htm
+			</result>
+		</action>
+		
+	</package>
+
+</struts>

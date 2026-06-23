@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Report for the ${examPolicy.name}</title>
+<style>
+body{width:1024px;text-align:center;margin:0 auto;}
+.examPaper{width:100%;background-color: #FFFFFF;margin-left:10%;}
+table{text-align:left;}
+table caption{text-align: left;}
+.examPaperTitle{text-align:center;font-weight:bold;font-style:italic;letter-spacing:5px;}
+.examPaperScore{text-align:center;margin-top:10px;}
+.btn{height:50px;margin-top:20px;}
+.score{text-decoration:underline}
+.resultTip{text-align:left;font-size:12px;}
+</style>
+</head>
+<body>
+	<#escape x as x?html>
+	<div class="examPaper" style="width:800px">
+		<div class="examPaperTitle">${examPolicy.name}</div>
+		<div class="examPaperTime">考试时间：<u>${examPolicy.examTimeStart?string('yyyy-MM-dd HH:mm:ss')}</u>&nbsp;至&nbsp;<u>${examPolicy.examTimeEnd?string('yyyy-MM-dd HH:mm:ss')}</u>&nbsp;共&nbsp;<u>${examPolicy.time!0}</u>&nbsp;分钟</div>
+		<#if examPolicy.showScore=="YES">
+			<div class="examPaperScore">总分:&nbsp;<span class="score">${examPolicy.totalScore}</span>&nbsp;&nbsp;客观题得分:&nbsp;<span class="score">${paperScore}</span></div>
+		</#if>
+		<#if examPolicy.showAnswer=="YES">
+			<div>
+				<#assign typeIndex=0>
+				<#if singleList?? && ((singleList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.SINGLE")}(共 ${singleList?size}题)</caption>
+						<tbody>
+							<#list singleList as item>
+								<tr>
+									<td style="padding-top:20px;">
+										&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].answerIdx}.${item.answerList[0].content}</#if><br>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:&nbsp;${item.correctAnswerList[0].answerIdx}.${item.correctAnswerList[0].content}
+										<#if examPolicy.showScore=="YES">
+											<br>&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if multList?? && ((multList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.MULT")}(共 ${multList?size}题)</caption>
+						<tbody>
+							<#list multList as item>
+								<tr >
+									<td style="padding-top:20px;">
+										&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:<br>
+										<#if ((item.answerList?size) > 0)>
+											<#list item.answerList as answerItem>
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${answerItem.answerIdx}.${answerItem.content}<br>
+											</#list>
+										</#if>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:<br>
+										<#list item.correctAnswerList as answerItem>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${answerItem.answerIdx}.${answerItem.content}<br>
+										</#list>
+										<#if examPolicy.showScore=="YES">
+											&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if judgeList?? && ((judgeList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.JUDGE")}(共 ${judgeList?size}题)</caption>
+						<tbody>
+							<#list judgeList as item>
+								<tr>
+									<td style="padding-top:20px;">
+										&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].answerIdx}.${item.answerList[0].content}</#if><br>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:&nbsp;${item.correctAnswerList[0].answerIdx}.${item.correctAnswerList[0].content}
+										<#if examPolicy.showScore=="YES">
+											<br>&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if clozeList?? && ((clozeList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.CLOZE")}(共 ${clozeList?size}题)</caption>
+						<tbody>
+							<#list clozeList as item>
+								<tr>
+									<td style="padding-top:20px;">
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if><br>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:&nbsp;${item.correctAnswerList[0].content}
+										<#if examPolicy.showScore=="YES">
+											<br>&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if explainList?? && ((explainList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.EXPLAIN")}(共 ${explainList?size}题)</caption>
+						<tbody>
+							<#list explainList as item>
+								<tr>
+									<td style="padding-top:20px;">
+										&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if><br>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:&nbsp;${item.correctAnswerList[0].content}
+										<#if examPolicy.showScore=="YES">
+											<br>&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if qnqList?? && ((qnqList?size)>0) >
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption style="padding-top:20px;">${typeIndex}.&nbsp;${resourceBundle("QuestionType.QNQ")}(共 ${qnqList?size}题)</caption>
+						<tbody>
+							<#list qnqList as item>
+								<tr>
+									<td style="padding-top:20px;">
+										&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)<br>
+										&nbsp;&nbsp;&nbsp;&nbsp;回答:&nbsp;<#if ((item.answerList?size)>0)>${item.answerList[0].content}</#if><br>
+										&nbsp;&nbsp;&nbsp;&nbsp;正确答案:&nbsp;${item.correctAnswerList[0].content}
+										<#if examPolicy.showScore=="YES">
+											<br>&nbsp;&nbsp;&nbsp;&nbsp;得分:&nbsp;${item.answerScore!}
+										</#if>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+			</div>
+		</#if>
+		<!-- <div><span class="resultTip">*主观题尚未审核。</span></div> -->
+		<#if examPolicy.showScore=="NO"&&examPolicy.showAnswer=="NO">
+			<div><span class="resultTip">考试已经结束，请单击关闭按钮关闭页面</span></div>
+		</#if>
+		<div class="btn"><input type="button" style="width:70px;height:30px" onclick="window.close();" value="关闭" /></div>
+	</div>
+	</#escape>
+</body>
+</html>

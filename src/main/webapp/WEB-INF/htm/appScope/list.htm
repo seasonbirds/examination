@@ -1,0 +1,36 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" id="checkboxAll" value="0" onclick="selectForAll(this)"/></th>
+			<th>序号</th>
+			<th>名称</th>
+			<th>考试类型</th>
+			<th>考试策略</th>
+			<th>试卷</th>	
+			<th>状态</th>
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>		
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;<input name="checkbox${item.id}" value="${item.id?c!0}" type="checkbox" onclick="selectOne(this)" /></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+			<td>&nbsp;${item.name}</td>
+			<td>&nbsp;${(resourceBundle("QuestionRangeType."+item.type))!}</td>
+			<td><a href="#" onclick="assemblePaper('${webroot}/examPolicy!list.action?examPolicy.scopeId=${item.id}&examPolicy.examType=${item.type}')"><img src="${webroot}/img/crud/user_edit.png" alt="组卷"/>(${item.policyNum!0})</a></td>
+			<td><a href="#" onclick="assemblePaper('${webroot}/examPaper!search.action?examPaper.scopeId=${item.id}')"><img src="${webroot}/img/crud/word.png" alt="试卷"/>(${item.paperNum!0})</a></td>			
+			<td>&nbsp;<#if item.status==1>启用<#else>禁用</#if></td>
+			<td><a class="f_tblist_show"  href="${webroot}/appScope!show.action?appScope.id=${item.id}"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a class="f_tblist_edit"  href="${webroot}/appScope!toCreateOrUpdate.action?dialogType=edit&appScope.id=${item.id}"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="f_single_delete" href="${webroot}/appScope!remove.action?appScope.id=${item.id}"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>	
+		</tr>
+		</#list>	
+		<@page.blank cellCount="10"/>
+	</tbody>	
+</table>
+

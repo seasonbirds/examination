@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ScopeCourseRel">
+	
+	<resultMap id="result" type="ScopeCourseRel">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="courseId" column="COURSE_ID" jdbcType="NUMERIC"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterType="ScopeCourseRel">
+	    <![CDATA[
+			INSERT INTO APP_SCOPE_COURSE_REL(
+				SCOPE_ID,
+				COURSE_ID
+			)VALUES(
+				#{scopeId,jdbcType=NUMERIC},
+				#{courseId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<delete id="deleteRel" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM APP_SCOPE_COURSE_REL WHERE SCOPE_ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectList" parameterType="ScopeCourseRel"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				APP_SCOPE_COURSE_REL
+			WHERE	
+				1=1	
+		]]>
+		<if test="scopeId!=null" >
+			AND SCOPE_ID=#{scopeId}
+		</if>
+		<if test="courseId!=null" >
+			AND COURSE_ID=#{courseId}
+		</if>				
+	</select>
+	
+	<select id="getCourseIdsByScopeId" parameterType="java.lang.Integer"  resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COURSE_ID
+			FROM 
+				APP_SCOPE_COURSE_REL
+			WHERE	
+				SCOPE_ID=#{scopeId}
+		]]>
+	</select>
+	
+</mapper>
+
+
+

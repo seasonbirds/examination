@@ -1,0 +1,441 @@
+<!--编辑表格begin-->
+<#setting number_format="#">
+<div class="input_box" style="width:800px">
+	<form id="tb_input" method="post">
+		<div class="box_title">策略信息</div>
+		<div class="box_content">
+			<input type="hidden" name="examPolicy.scopeId" id="examPolicy.scopeId" value="${examPolicy.scopeId!}">
+			<input type="hidden" name="examPolicy.id" id="examPolicyId" value="${examPolicy.id!}">
+			<table class="tb_input" >
+				<caption>
+				试卷基本信息
+				</caption>
+				<tbody>
+					<tr>
+						<th>试卷名称 <strong class="red">*</strong></th>
+						<td><input type="text" name="examPolicy.name" value="${examPolicy.name!}"></td>
+					</tr>
+					<tr>
+						<th>考试开始时间 <strong class="red">*</strong></th>
+						<td>
+							<input type="text" name="examPolicy.examTimeStart" value="${(examPolicy.examTimeStart?string('yyyy-MM-dd HH:mm:ss'))!}"
+							onfocus="WdatePicker({readOnly:true,startDate:'%y-%M-%d 00:00:00',dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})">
+						</td>
+					</tr>
+					<tr>
+						<th>考试结束时间 <strong class="red">*</strong></th>
+						<td>
+							<input type="text" name="examPolicy.examTimeEnd" value="${(examPolicy.examTimeEnd?string('yyyy-MM-dd HH:mm:ss'))!}"
+							onfocus="WdatePicker({readOnly:true,startDate:'%y-%M-%d 23:59:59',dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})">
+						</td>
+					</tr>					
+					<tr>
+						<th>答题时间 <strong class="red">*</strong></th>
+						<td><input type="text" name="examPolicy.time" value="${examPolicy.time!}">分钟</td>
+					</tr>
+					<tr>
+						<th>显示答案 <strong class="red">*</strong></th>
+						<td><input type="radio" id="radio11" name="examPolicy.showAnswer" value="YES" <#if examPolicy.showAnswer??&&examPolicy.showAnswer=="YES">checked="checked"</#if>>
+							<label for="radio11">是</label>
+							<input type="radio" id="radio12" name="examPolicy.showAnswer" value="NO" <#if examPolicy.showAnswer??&&examPolicy.showAnswer=="NO">checked="checked"</#if>>
+							<label for="radio12">否</label>
+						</td>
+					</tr>
+					<tr>
+						<th>显示成绩 <strong class="red">*</strong></th>
+						<td><input type="radio" id="radio21" name="examPolicy.showScore" value="YES" <#if examPolicy.showScore??&&examPolicy.showScore=="YES">checked="checked"</#if>>
+							<label for="radio11">是</label>
+							<input type="radio" id="radio22" name="examPolicy.showScore" value="NO" <#if examPolicy.showScore??&&examPolicy.showScore=="NO">checked="checked"</#if>>
+							<label for="radio12">否</label>
+						</td>
+					</tr>
+					<tr>
+						<th>试卷总分 <strong class="red">*</strong></th>
+						<td><input type="text" id="sum_score" name="examPolicy.totalScore" value="${examPolicy.totalScore!}"></td>
+					</tr>
+					<tr>
+						<th>通过分数</th>
+						<td><input type="text" name="examPolicy.passScore" value="${examPolicy.passScore!}"></td>
+					</tr>
+					<tr>
+						<th>描述信息</th>
+						<td><textarea name="examPolicy.memo">${examPolicy.memo!}</textarea></td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="tblist tb_statistics f_item_list" style="margin-top:0px;">
+				<caption style="padding-left:5px;padding-right:0px;">
+				试卷题目设置
+				</caption>
+				<tbody>
+					<tr>
+						<th rowspan="2" scope="col">&nbsp;</th>
+						<th colspan="2" scope="col">简单</th>
+						<th colspan="2" scope="col">中等</th>
+						<th colspan="2" scope="col">难</th>
+					</tr>
+					<tr>
+						<th>题量</th>
+						<th>每题分数</th>
+						<th>题量</th>
+						<th>每题分数</th>
+						<th>题量</th>
+						<th>每题分数</th>
+					</tr>
+					<tr class="f_item" id="tr_judge">
+						<th width="15%" scope="row">判断题（共<span id="judge_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("JUDGEEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("JUDGEMEDIUM")!0}</label>题)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("JUDGEHARD")!0}</label>题)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr class="f_item" id="tr_single">
+						<th scope="row">单选题（共<span id="single_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("SINGLEEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("SINGLEMEDIUM")!0}</label>题)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("SINGLEHARD")!0}</label>题)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr class="f_item" id="tr_mult">
+						<th scope="row">多选题（共<span id="mult_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("MULTEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("MULTMEDIUM")!0}</label>题)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("MULTHARD")!0}</label>题)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr class="f_item" id="tr_cloze">
+						<th scope="row">填空题（共<span id="cloze_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("CLOZEEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("CLOZEMEDIUM")!0}</label>题)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("CLOZEHARD")!0}</label>题)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr class="f_item" id="tr_explain">
+						<th scope="row">名词解释（共<span id="explain_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("EXPLAINEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("EXPLAINMEDIUM")!0}</label>题)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("EXPLAINHARD")!0}</label>题)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr class="f_item" id="tr_qnq">
+						<th scope="row">问答题（共<span id="qnq_number">0</span>题）</th>
+						<td><input class="f_number f_easy" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("QNQEASY")!0}</label>题)</td>
+						<td><input class="f_score f_easy" name=""  type="text" value=""></td>
+						<td><input class="f_number f_normal" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("QNQMEDIUM")!0}题</label>)</td>
+						<td><input class="f_score f_normal" name="" type="text" value=""></td>
+						<td><input class="f_number f_difficulty" name="" type="text" value="">&nbsp;&nbsp;(<label>${questionTypeAndCountMap.get("QNQHARD")!0}题</label>)</td>
+						<td><input class="f_score f_difficulty" name="" type="text" value=""></td>
+					</tr>
+					<tr>
+						<th scope="row">小计</th>
+						<td colspan="2"><span id="easy_number">0</span>道，共<span id="easy_score">0</span>分</td>
+						<td colspan="2"><span id="normal_number">0</span>道，共<span id="normal_score">0</span>分</td>
+						<td colspan="2"><span id="difficulty_number">0</span>道，共<span id="difficulty_score">0</span>分</td>
+					</tr>
+					<tr>
+						<th colspan="7" scope="row" id="total_th">题目总计：<span id="total_number">0</span>道；当前试卷总分：<span id="total_score">0</span>分（您设置的试卷总分：<span id="setting_score">0</span>分）</th>
+					</tr>
+				</tbody>
+			</table>
+			<table class="tb_input" >
+				<caption>
+				试卷策略
+				</caption>
+				<tbody>
+					<tr>
+						<th>试题套数 <strong class="red">*</strong></th>
+						<td>
+							<#if examPolicy?? && examPolicy.examType?? && (examPolicy.examType=="SIMULATION")>
+								<input type="text" name="examPolicy.paperCount" value="1" readonly="readonly">
+							<#else>
+								<input type="text" name="examPolicy.paperCount" value="${examPolicy.paperCount!0}" >
+							</#if>
+						</td>
+					</tr>
+					<tr>
+						<th>出题周期<strong class="red">*</strong></th>
+						<td><input type="text" name="examPolicy.generateCycle" value="${examPolicy.generateCycle!0}">天</td>
+					</tr>
+					<tr class="hide">
+						<th>是否保存试卷</strong></th>
+						<td><input type="radio" id="radio31" name="examPolicy.savePage" value="YES" checked="checked">
+							<label for="radio11">是</label>
+							<input type="radio" id="radio32" name="examPolicy.savePage" value="NO" >
+							<label for="radio12">否</label>
+						</td>
+					</tr>
+					<tr class="hide">
+						<th>是否统一试卷 </strong></th>
+						<td><input type="radio" id="radio41" name="examPolicy.isUnify" value="YES" checked="checked">
+							<label for="radio11">是</label>
+							<input type="radio" id="radio42" name="examPolicy.isUnify" value="NO" >
+							<label for="radio12">否</label>
+						</td>
+					</tr>
+					<tr>
+						<th>出题方式 </strong></th>
+						<td><input type="radio" id="radio51" name="examPolicy.type" value="AUTO" <#if examPolicy.type??><#if examPolicy.type=="AUTO">checked="checked"</#if><#else>checked="checked"</#if>>
+							<label for="radio11">自动</label>
+							<input type="radio" id="radio52" disabled="disabled" name="examPolicy.type" value="MANUAL" <#if examPolicy.type??><#if examPolicy.type=="MANUAL">checked="checked"</#if></#if>
+							<label for="radio12">手动</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<#if examPolicy?? && examPolicy.examType?? && (examPolicy.examType=="ENROL")>
+				<table class="tb_input" >
+					<caption>
+					试题占模拟试题的比例
+					</caption>
+					<tbody>
+						<tr>
+							<th>模拟试题</strong></th>
+							<td><select id="simId" name="simId"></select></td>
+						</tr>
+						<tr>
+							<th>比例</strong></th>
+							<td><input type="text" id="simRatio" name="simRatio" value="0">&nbsp;&nbsp;%</td>
+						</tr>
+					</tbody>
+				</table>
+			</#if>
+		</div>
+		<div class="box_foot">
+			<div class="box_foot_buttons">
+				<#if examPolicy?? && examPolicy.examType?? && (examPolicy.examType!="ENROL")>
+					<a class="bt_green" id="input_submit" href="javascript:void(0)" onclick="submitPolicy()">保 存</a>
+				</#if>
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">返 回</a>
+				<a class="bt_blue" id="create_paper_submit" href="javascript:void(0)" onclick="submitPolicy(true)">保存并生成试卷</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!--编辑表格end--> 
+<script type="text/javascript">
+$(function(){
+	//加载比例设置部分的模拟试题下拉框
+	var ratioSec = $("#simId");
+	if(ratioSec.length > 0){
+		$.post("appScope!getSimulationExamWithSameCourse.action", "appScope.type=SIMULATION&appScope.id="+$("#examPolicy\\.scopeId").val(), function(response){
+			if(response.result == 0){
+				var data = response.data;
+				var options = "";
+				for(var i=0; i<data.length; i++){
+					options += "<option value=" + data[i].id + ">" + data[i].name + "</option>";
+				}
+				ratioSec.html(options);
+			}
+		},"json");
+	}
+	
+	$(".f_item").find("input[type='text']").change(function(){
+		var qnum = parseInt($(this).parent().find("label").html());
+		var value = parseInt($(this).val());
+		if(value > qnum){
+			if($(this).attr("class").indexOf("filedError") < 0){
+				$(this).addClass("filedError");
+			}
+			$(this).tip({content:"题量不能大于题库的数量！"});
+		}else if(value <= qnum){
+			if($(this).attr("class").indexOf("filedError") > -1){
+				$(this).removeClass("filedError");
+			}
+		}
+	});
+	
+	$("#tb_input").validate({
+		rules:{
+			"examPolicy.name":{
+				required:true
+			},
+			"examPolicy.examTimeStart":{
+				required:true
+			},
+			"examPolicy.examTimeEnd":{
+				required:true
+			},
+			"examPolicy.time":{
+				required:true,
+				digits:true,
+				min:0
+			},
+			"showAnswer":{
+				required:true
+			},
+			"showScore":{
+				required:true
+			},
+			"examPolicy.totalScore":{
+				required:true,
+				digits:true,
+				min:0
+			},
+			"examPolicy.passScore":{
+				digits:true,
+				min:0
+			},
+			"examPolicy.paperCount":{
+				required:true,
+				digits:true,
+				min:0
+			},
+			"examPolicy.generateCycle":{
+				required:true,
+				digits:true,
+				min:0
+			},
+			"simId":{
+				required:true
+			},
+			"simRatio":{
+				required:true,
+				digits:true,
+				min:0,
+				max:100
+			}
+		},
+		messages:{
+			"examPolicy.name":{
+				required:"请输入试卷名称"
+			},
+			"examPolicy.examTimeStart":{
+				required:"请选择考试开始时间"
+			},
+			"examPolicy.examTimeEnd":{
+				required:"请选择考试结束时间"
+			},
+			"examPolicy.time":{
+				required:"请输入考试时间",
+				digits:"考试时间必须为整数",
+				min:"考试时间不能小于0"
+			},
+			"showAnswer":{
+				required:"请选择是否立即显示答案"
+			},
+			"showScore":{
+				required:"请选择是否立即显示分数"
+			},
+			"examPolicy.totalScore":{
+				required:"请输入试卷总分",
+				digits:"试卷总分必须为整数",
+				min:"试卷总分不能小于0"
+			},
+			"examPolicy.passScore":{
+				digits:"通过分必须为整数",
+				min:"通过分不能小于0"
+			},
+			"examPolicy.paperCount":{
+				required:"请输入试卷套数",
+				digits:"试卷套数只能为整数",
+				min:"试卷套数不能小于0"
+			},
+			"examPolicy.generateCycle":{
+				required:"请输入出题周期",
+				digits:"出题周期只能为整数",
+				min:"出题周天最新为0"
+			},
+			"simId":{
+				required:"请选择考试"
+			},
+			"simRatio":{
+				required:"请输入比例",
+				digits:"只能输入整数",
+				min:"输入值必须大于0",
+				max:"输入值必须小于100"
+			}
+		},
+		errorPlacement: function (error, element) { //指定错误信息位置
+			if (element.is(':radio') || element.is(':checkbox')) {
+				tip_p = element.nextAll("p");
+				if(tip_p.length > 0){
+					error.insertBefore(tip_p);	
+				}else{
+					error.appendTo(element.parent());
+				}
+			} else {
+				error.appendTo(element.parent());
+			}
+ 		} 
+	});
+	//输入题数，监控keydown,过滤无关的字符
+	$('.f_score').keydown(function(event){
+		filterKey(event);
+	});
+	
+	//输入分数，监控keydown,过滤无关的字符
+	$('.f_number').keydown(function(event){
+		filterKey(event);
+	});
+	
+	//输入焦点离开,计算分数
+	$('.f_score').focusout(function(){
+		if($(this).hasClass("f_easy")){
+			setNumberAndScore("easy");
+		}else if($(this).hasClass("f_normal")){
+			setNumberAndScore("normal")	
+		}else{
+			setNumberAndScore("difficulty")
+		}
+		setTotal();	
+	});
+	
+	//输入题数框离开，计算题数
+	$('.f_number').focusout(function(){
+		if($(this).hasClass("f_easy")){
+			setNumberAndScore("easy");
+		}else if($(this).hasClass("f_normal")){
+			setNumberAndScore("normal")	
+		}else{
+			setNumberAndScore("difficulty")
+		}
+		setTotal();	
+		//以下计算这行有多少道题
+		$tr = $(this).closest("tr");
+		number = 0;
+		$tr.find('.f_number').each(function(index, element) {
+			item_number = $(this).val();
+			if(item_number != "" && item_number != "0"){
+				number+=parseInt(item_number);
+			}				
+		});
+		$tr.children('th').children('span').html(number);
+	});
+	
+	
+	//初始化
+	setNumberAndScore("easy");
+	setNumberAndScore("normal");
+	setNumberAndScore("difficulty");
+	setTotal();
+	
+	//设置总分
+	$('.tb_input').on('focusout','#sum_score',function(){
+		$('#setting_score').html($(this).val());
+	});
+	$('#setting_score').html($('#sum_score').val());
+
+	<#if dialogType??>
+		<#if dialogType=="show">
+			$("#input_submit").addClass("hide");
+			$("#create_paper_submit").addClass("hide");
+		</#if>
+		<#if dialogType=="show" || dialogType=="edit">
+			//load question setting
+			loadQuestionSetting($("#examPolicyId").val());
+		</#if>
+	</#if>
+	
+});
+</script> 

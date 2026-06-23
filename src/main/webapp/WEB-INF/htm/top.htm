@@ -1,0 +1,73 @@
+
+	<link rel="stylesheet" href="${webroot}/css/top.css" type="text/css"/>
+	<script src="${webroot}/js/jquery-1.4.2.js" type="text/javascript"></script>
+	<script src="${webroot}/js/top.js" type="text/javascript"></script>
+<!--**************************************LOGO**************************************-->
+	<div class="logo">
+		<img src="${webroot}/img/logo.gif">
+		<ul>
+			<li><a href="#"><img src="${webroot}/img/home.gif"></a></li>
+			<li><a href="#"><img src="${webroot}/img/help.gif"></a></li>
+			<li><a onclick="return confirm('提示：您确定要退出系统吗？')" href='
+<#if Application.casServerLogoutUrl?exists>${Application.casServerLogoutUrl}</#if>?service=<#if Application.casLogoutUrl?exists>${Application.casLogoutUrl}</#if>'><img src="${webroot}/img/exit.gif"></a></li>
+		</ul>
+	</div>
+<!--**************************************NAV***************************************-->
+	<ul class="nav" id="nav">
+		<LI  style="padding-left:40px;" onclick="sx(0)"><A  href="#" id="nav0">首<span style="padding:0 14px"></span>页</A></LI>
+		<#if GlobalAuthUser?exists>
+		<#list GlobalAuthUser.menuRootList as menuRoot>
+			<li onclick="sx(${menuRoot_index+1})">
+	 		<a href="#" id="nav${menuRoot_index+1}"
+	 		<#if menuRoot.id==GlobalAuthUser.menuParentId>
+	 		style="background:url(${webroot}/navhover.gif);color:#1D4A6C"
+	 		</#if>
+	 		>
+	 			${menuRoot.name}
+	 		</a>
+ 			</li>
+		</#list>
+	</#if>
+	</ul>
+
+<!--**************************************SEC***************************************-->	
+	<ul class="sec" id="allmenu">
+		<div id="sec0">
+			<div>
+				<li></li>
+			</div>
+		</div>
+		<#if GlobalAuthUser?exists>
+			<#list GlobalAuthUser.menuRootList as menuRoot>
+				<div id="sec${menuRoot_index+1}" class="secstyle"<#if menuRoot.id==GlobalAuthUser.menuParentId>style="display:block"</#if>>
+					<div id="allsmenu${menuRoot_index+1}">
+						<#list menuRoot.subList as myMenu>
+						<li id="${menuRoot.id}_${myMenu.id}" <#if myMenu_index==0>style="padding-left:40px;" </#if>>
+							<a <#if myMenu_index==0>class="selectItem"</#if>
+								onclick="checkMenuRight(${menuRoot.id},${myMenu.id});"  id="tsecbk"  href="#">${myMenu.name}
+							</a>
+						</li>
+						<#if myMenu_has_next>
+							<li class="lii"></li>
+						</#if>
+						</#list>
+						<table >
+							<tr>
+								<td>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</#list>
+		</#if>
+	</ul>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,133 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<div class="input_box">
+	<form id="questionForm">
+		<div class="box_title">修改试题</div>
+		<div class="box_content">
+			<input type="hidden" id="examQuestionId" name="examQuestion.id" value="${examQuestion.id?c!0}">
+			<table class="tb_input" >
+				<tbody>
+					<tr>
+						<th>题干 <strong class="red">*</strong></th>
+						<td>
+							<textarea name="examQuestion.content" id="content">${examQuestion.content!}</textarea>
+						</td>
+					</tr>
+					<tr>
+						<th>题目代码 <strong class="red">*</strong></th>
+						<td>
+							<input type="text" disabled="disabled" name="examQuestion.code" id="code" value="${examQuestion.code!}"/>
+						</td>
+					</tr>					
+					<tr>
+						<th>题目类型 <strong class="red">*</strong></th>
+						<td>
+							<@enum.select disabled="true" id="examQuestion.type" type="com.vnetoo.examination.enums.QuestionType" header="false" default="${examQuestion.type!}"/>
+						</td>
+					</tr>
+					<tr>
+						<th>题目难度 <strong class="red">*</strong></th>
+						<td>
+							<@enum.select id="examQuestion.lev" type="com.vnetoo.examination.enums.QuestionLevel" header="false" default="${examQuestion.lev!}"/>
+						</td>
+					</tr> 
+					<tr>
+						<th>题目范围 <strong class="red">*</strong></th>
+						<td>
+							<@enum.select id="examQuestion.rangeType" type="com.vnetoo.examination.enums.QuestionRangeType" header="false" default="${examQuestion.rangeType!}"/>
+						</td>
+					</tr> 
+					<tr>
+					<th>课程<strong class="red">*</strong></th>
+					<td>
+						<select id="qcourseId" name="examQuestion.courseId" class="select_input"></select>
+						<input type="hidden" id="qcourseIdHidden" value="${examQuestion.courseId!}"/>
+						<!-- 此处使用ID前加入"q"是为了避免与search.htm中的courseId相冲突(下面相同) -->
+					</td>
+					</tr>
+					<tr>
+						<th>知识点 <strong class="red">*</strong></th>
+						<td>
+							<input id="qkeyPointId" name="examQuestion.keyPointId" type="hidden" value="${examQuestion.keyPointId!}"/>
+							<input id="qselectKeyPointId" type="text" class="select_input" value="${pointName!}" readonly=true></input>
+							<div class="hide" id="qselectTree">
+								<ul id="qkeyPointTree" class="ztree" style="margin-top:0;width:200px;height:300px;overflow:auto"></ul>
+							</div>
+						</td>
+					</tr>
+					<tr>
+					<th>答案<strong class="red">*</strong><br/>
+					(选中行,为正确答案)</th>
+					<td>
+						<ul class="answers">
+						 <#list examQuestion.answerList as item>
+						 	<li <#if item.valid=='1'>class="right"</#if>><input value="${item.id?c!0}" type="radio" <#if item.valid=='1'>checked="checked"</#if> name="answerId"/>${item.answerIdx!}、<input type="text" name="answerName${item.id?c!0}" value="${item.content}"/>
+						 	<input type="hidden" value="${item.answerIdx!}" name="answerIdx"/>
+						 	</li>
+						 </#list>
+						</ul>
+					</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="box_foot">
+			<div class="box_foot_buttons">
+				<a class="bt_green" id="input_submit" href="javascript:void(0)" onclick="saveQuestion()">保存</a>
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">返回</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+<script type="text/javascript" src="${webroot}/js/coursePoint.js"></script>
+<script type="text/javascript">
+$(function(){ 
+ 
+	$(".answers li input[type=text]").click(function(e){
+		//如果提供了事件对象，则这是一个非IE浏览器
+		if(e && e.stopPropagation) {
+		　　//因此它支持W3C的stopPropagation()方法
+		　　e.stopPropagation();
+		} else {
+		　　//否则，我们需要使用IE的方式来取消事件冒泡
+		　　window.event.cancelBubble = true;
+		}
+		return false;
+	})
+	$(".answers li").click(function(){
+		$(".answers .right input[name=answerId]").prop("checked",false);
+		$(".answers .right").removeClass("right");
+		$(this).addClass("right");
+		$(this).find('input[name=answerId]').prop("checked",true);
+	})
+	$("#questionForm").validate({
+		rules:{
+			"examQuestion.content":{
+				required:true
+			}
+		},
+		messages:{
+			"examQuestion.content":{
+				required:"请输入题干"
+			}
+		},
+		errorPlacement: function (error, element) {
+			error.appendTo(element.parent());
+ 		} 
+	});	
+});
+function saveQuestion(){
+	if($("#questionForm").valid()){
+		var params= $("#questionForm").serialize();		
+		$.post("examQuestion!save.action", params, function(response){
+			if(response.result == 0){
+				$.colorbox.close();
+				jAlertSuccess("操作成功");
+				pageQuery();
+			}else{
+				jAlertError(response.msg);
+			}
+		},"json");
+	}
+}
+</script>

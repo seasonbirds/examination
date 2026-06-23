@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SysRight">
+	
+	<resultMap id="result" type="SysRight">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="name" column="NAME" jdbcType="VARCHAR"/>
+		<result property="parentId" column="PARENT_ID" jdbcType="NUMERIC"/>
+		<result property="status" column="STATUS" jdbcType="VARCHAR"/>
+		<result property="url" column="URL" jdbcType="VARCHAR"/>
+		<result property="code" column="CODE" jdbcType="VARCHAR"/>
+		<result property="seq" column="SEQ" jdbcType="NUMERIC"/>
+		<result property="memo" column="MEMO" jdbcType="VARCHAR"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="SysRight">
+		<selectKey resultType="java.lang.Integer" keyProperty="id">
+	       SELECT EXAM.SEQ_SYS_RIGHT.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO SYS_RIGHT(
+				ID,
+				NAME,
+				PARENT_ID,
+				STATUS,
+				URL,
+				CODE,
+				SEQ,
+				MEMO,
+				ENABLED_FLAG
+			)VALUES(
+				#id:NUMERIC#,
+				#name:VARCHAR#,
+				#parentId:NUMERIC#,
+				#status:VARCHAR#,
+				#url:VARCHAR#,
+				#code:VARCHAR#,
+				#seq:NUMERIC#,
+				#memo:VARCHAR#,
+				#enabledFlag:NUMERIC#
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="SysRight">
+		<![CDATA[
+			UPDATE SYS_RIGHT SET 
+				ID=#id:NUMERIC#,
+				NAME=#name:VARCHAR#,
+				PARENT_ID=#parentId:NUMERIC#,
+				STATUS=#status:VARCHAR#,
+				URL=#url:VARCHAR#,
+				CODE=#code:VARCHAR#,
+				SEQ=#seq:NUMERIC#,
+				MEMO=#memo:VARCHAR#,
+				ENABLED_FLAG=#enabledFlag:NUMERIC#
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE SYS_RIGHT SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM SYS_RIGHT WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_RIGHT
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="SysRight"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				SYS_RIGHT
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="name!=null" >
+			AND upper(NAME) like upper('%${name}%')
+		</if>
+		<if test="parentId!=null" >
+			AND PARENT_ID=#{parentId}
+		</if>
+		<if test="status!=null" >
+			AND upper(STATUS) like upper('%${status}%')
+		</if>
+		<if test="url!=null" >
+			AND upper(URL) like upper('%${url}%')
+		</if>
+		<if test="code!=null" >
+			AND upper(CODE) like upper('%${code}%')
+		</if>
+		<if test="seq!=null" >
+			AND SEQ=#{seq}
+		</if>
+		<if test="memo!=null" >
+			AND upper(MEMO) like upper('%${memo}%')
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				SYS_RIGHT
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.name!=null" >
+			AND upper(NAME) like upper('%${bo.name}%')
+		</if>
+		<if test="bo.parentId!=null" >
+			AND PARENT_ID=#{bo.parentId}
+		</if>
+		<if test="bo.status!=null" >
+			AND upper(STATUS) like upper('%${bo.status}%')
+		</if>
+		<if test="bo.url!=null" >
+			AND upper(URL) like upper('%${bo.url}%')
+		</if>
+		<if test="bo.code!=null" >
+			AND upper(CODE) like upper('%${bo.code}%')
+		</if>
+		<if test="bo.seq!=null" >
+			AND SEQ=#{bo.seq}
+		</if>
+		<if test="bo.memo!=null" >
+			AND upper(MEMO) like upper('%${bo.memo}%')
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="findRightByRole" parameterType="java.lang.Integer"
+		resultMap="result">
+		<![CDATA[
+		SELECT R.* FROM SYS_ROLE_RIGHT_REL RE,SYS_RIGHT R WHERE RE.ROLE_ID=#{id} AND RE.RIGHT_ID=R.ID
+		]]>
+	</select>
+	
+</mapper>
+
+
+

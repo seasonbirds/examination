@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ScopeUserRel">
+	
+	<resultMap id="result" type="ScopeUserRel">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="userId" column="USER_ID" jdbcType="NUMERIC"/>
+	</resultMap>
+		
+	<insert id="insertRel" parameterType="ScopeUserRel">
+	    <![CDATA[
+			INSERT INTO APP_SCOPE_USER_REL(
+				SCOPE_ID,
+				USER_ID
+			)VALUES(
+				#{scopeId,jdbcType=NUMERIC},
+				#{userId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<select id="selectList" parameterType="ScopeUserRel"  resultMap="result">
+		<![CDATA[
+			SELECT SCOPE_ID,USER_ID
+			FROM 
+				APP_SCOPE_USER_REL
+			WHERE
+				1=1
+		]]>
+		<if test="scopeId!=null" >
+			AND SCOPE_ID=#{scopeId}
+		</if>
+		<if test="userId!=null" >
+			AND USER_ID=#{userId}
+		</if>
+			ORDER BY SCOPE_ID
+	</select>
+</mapper>
+
+
+

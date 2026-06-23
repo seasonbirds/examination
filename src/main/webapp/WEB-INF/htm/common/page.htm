@@ -1,0 +1,70 @@
+<#macro init paginatorSearch="paginatorSearch">
+<SCRIPT LANGUAGE="JavaScript">
+var startRow=0;			//搜索的开始记录
+var isLastPage=false;	//是否是最后一页
+var pageSize = ${paginator.pageSize};
+var sortFieldName = '${paginator.sortFieldName}';
+var sortDesc = ${paginator.sortDesc?string};
+var selectList=new Set();
+setPageInfo();
+function pageQuery(){
+	${paginatorSearch}();
+}
+</SCRIPT>
+</#macro>
+
+<#macro blank cellCount>
+<#list paginator.resultListCount..paginator.pageSize as row>
+<#if row!=paginator.pageSize>
+<tr <#if row_index%2!=paginator.resultListCount%2>class="even"</#if>>
+	<#list 1..cellCount?number as cell><td>&nbsp;</td></#list>
+</tr>
+</#if>
+</#list>
+</#macro>
+
+<#macro info>
+<div id="page.info" style="display:none;">
+	搜索结果${paginator.resultCount}个&nbsp;第${paginator.pageIndex}页/共${paginator.pageCount}页
+	<select onchange="gotoPage(this.selectedIndex+1)">					
+	<#list 1..paginator.pageCount as i>
+	<option value="${i}" <#if i==paginator.pageIndex>selected</#if>>${i}</option>
+	</#list>
+	</select>
+</div>	
+<div id="page.startRow" style="display:none;">${paginator.startRowNum}</div>
+<div id="page.lastPage" style="display:none;"><#if paginator.lastPage>true<#else>false</#if></div>
+<div id="page.sortFieldName" style="display:none;">${paginator.sortFieldName}</div>
+<div id="page.sortDesc" style="display:none;"><#if paginator.sortDesc>true<#else>false</#if></div>
+<div id="page.total" style="display:none;">${paginator.resultCount}</div>
+<div id="page.selCount" style="display:none;">0</div>
+</#macro>
+
+<#macro navigation>
+<table class="tblist f_tblist">	
+	<tfoot>
+		<tr>
+			<td colspan="11">
+				<div class="pagination"> 					
+					<div class="pagination">
+					<a id="page.first" href="javascript:pageFirst()">首页</a>
+					<a id="page.prev" href="javascript:pagePrev()">上一页</a>
+					<a id="page.next" href="javascript:pageNext()">下一页 </a>
+					<a id="page.last" href="javascript:pageLast()">尾页</a> 
+					每页显示 
+					<select onChange="setPageSize(this.value)">
+						<option value="5" <#if paginator.pageSize==5>selected</#if> >5</option>
+						<option value="10" <#if paginator.pageSize==10>selected</#if> >10</option>
+						<option value="20" <#if paginator.pageSize==20>selected</#if> >20</option>
+						<option value="50" <#if paginator.pageSize==50>selected</#if> >50</option>
+					</select>
+					</div>
+					<div id="page.navigation" class="pagination"></div>
+				</div>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+</#macro>
+
+

@@ -1,0 +1,198 @@
+<table class="table_keypoint">
+	<tbody><tr> 
+		<td class="td_left">
+			<div class="td_left_div">
+				<div class="top">
+				</div>
+				<div style="clear:both;overflow:hidden"></div>
+				<div class="kptree">
+					 <ul class="ztree" id="keyPointTree"></ul>
+				</div>
+				<input type="hidden" id="selectNodeId" value="">
+				<div class="top">
+				</div>
+			</div>
+		</td>
+		<td width="5px" valign="top">
+			<div class="td_m1_div"></div>
+		</td>
+		<td width="5px" bgcolor="#ffffff">
+			<div class="td_m2_div"></div>
+		</td>
+		<td valign="top" class="td_right" id="gd">
+			<form id="query_form" action="${webroot}/examKeyPoint!query.action">
+				<input type="hidden" id="isParent" name="isParent" value="">
+				<input type="hidden" id="parentId" name="parentId" value="">
+				<input type="hidden" id="courseId" name="examKeyPoint.courseId" value="${examKeyPoint.courseId!8}">
+				<table class="tb_query">
+					<tbody>
+						<tr>
+							<th>知识点名称：</th>
+							<td>&nbsp;<input type="text" id="examKeyPoint.name" name="examKeyPoint.name"/></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="4" align="center">
+							<a class="bt_green" id="query_button" href="javascript:seacherKeyPoint()" >查 询</a>
+							<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+			<div class="separate_div"></div>
+			<table class="tblist f_tblist">
+				<caption>
+				<#if appCourse??>《${appCourse.name!}》</#if>知识点列表
+				<span class="operate_list"> 
+					<a class="bt_blue_30 f_add_operate" href="javascript:void(0)" onclick="showkeyPointDialog('add');">添加</a>
+					<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a> 
+				</span>	
+				</caption>
+			</table>
+				
+			<div id="page.result">
+				<#include "list.htm">
+			</div>
+					
+			<@page.navigation/>
+			
+			<@page.init/>
+		</td></tr>
+	</tbody>
+</table>
+
+<script type="text/javascript">
+function replaceUrl(url){
+	$('#right_content').load(url,function(){
+			reset_left_content_height();//在common.js定义
+		});		
+}
+var setting = {
+	view: {
+		dblClickExpand: true,
+		showLine: true,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey:"id",
+			pIdKey:"pid",
+			rootPId: 0
+		}
+	},
+	async: {
+		enable: true,
+		url:function(){return "examKeyPoint!getKeyPointTree.action" + "?examKeyPoint.courseId=" + $("#courseId").val();},
+		type:"get",
+		dataFilter: null
+	},
+	callback: {
+		onAsyncSuccess:function(event,treeId,treeNode){
+			var treeObj = $.fn.zTree.getZTreeObj("keyPointTree");
+			var nodes = treeObj.getNodes();
+			var node = nodes[0];
+			while(node.pid != 0){
+				node = node.getParentNode();
+			}
+
+			$("#isParent").val(true);
+			$("#parentId").val(node.id);
+			pageQuery();
+		},
+		onClick:function(event,treeId,treeNode){
+			var isParent = false;
+			if (treeNode.isParent) {
+				isParent = true;
+			}
+			$("#isParent").val(isParent);
+			$("#parentId").val(treeNode.id);
+			$("#examKeyPoint\\.name").val("");
+			pageQuery();
+		}
+	}
+};
+
+/**
+ * Refresh the tree for key point and key point's parent
+ */
+function refreshTree(){
+	var treeObj = $.fn.zTree.getZTreeObj("keyPointTree");
+	treeObj.reAsyncChildNodes(null, "refresh");
+}
+
+function seacherKeyPoint(){
+	$("#parentId").val("");
+	pageQuery();
+}
+
+function showkeyPointDialog(type,id){
+	if(type != "show" && type != "add" && type != "edit"){
+		return;
+	}
+	
+	var url = "examKeyPoint!toCreateOrUpdate.action?dialogType=" + type + "&examKeyPoint.courseId=" + $("#courseId").val();
+	if(id != undefined && id != null){
+		url += "&examKeyPoint.id=" + id;
+	}
+	$.colorbox({
+		href:url
+	});
+}
+
+function deleteKeyPoint(obj,id){
+	$(obj).jConfirmAction({
+		question:"确定删除该记录吗？",
+		yesAnswer:"是",cancelAnswer:"否",
+		yesAction:function($this){
+			jQueryPost("${webroot}/examKeyPoint!remove.action?examKeyPoint.id="+id,
+				{},
+				function(result,msg){
+					if(result==0){	
+						refreshTree();				
+						pageQuery();
+						jAlert("删除成功!");
+					}else{
+						jAlertError("删除失败!"+msg);
+					}
+				}
+			);
+		}
+	});
+	
+}
+	
+$(function(){
+	$.fn.zTree.init($("#keyPointTree"), setting);
+
+	$('.f_batch_delete').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要操作的数据"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+		}		
+	});
+	$('.f_batch_delete').jConfirmAction({
+			question:"确定删除选中的 记录吗？",
+			yesAnswer:"是",cancelAnswer:"否",
+			yesAction:function($this){
+				jQueryPost("${webroot}/examKeyPoint!batchRemove.action",{
+					"appScope.ids":selectList.getData()
+					},
+					function(result,msg){
+						if(result==0){
+							jAlert("删除成功！");
+							refreshTree();				
+							pageQuery();						
+						}else{
+							jAlertError("删除失败！");
+						}
+				});	
+			}
+	});
+	
+});
+</script>
+

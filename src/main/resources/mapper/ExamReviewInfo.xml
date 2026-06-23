@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamReviewInfo">
+	
+	<resultMap id="result" type="ExamReviewInfo">
+		<result property="scopeId" column="SCOPE_ID" jdbcType="NUMERIC"/>
+		<result property="scopeName" column="SCOPE_NAME" jdbcType="NUMERIC"/>
+		<result property="studentId" column="STUDENT_ID" jdbcType="VARCHAR"/>
+		<result property="studentAcct" column="STUDENT_ACCT" jdbcType="VARCHAR"/>
+		<result property="studentName" column="STUDENT_NAME" jdbcType="VARCHAR"/>
+		<result property="nickName" column="NICK_NAME" jdbcType="VARCHAR"/>
+		<result property="examTime" column="EXAM_TIME" jdbcType="TIMESTAMP"/>
+		<result property="paperId" column="PAPER_ID" jdbcType="NUMERIC"/>
+		<result property="paperName" column="PAPER_NAME" jdbcType="VARCHAR"/>
+		<result property="passScore" column="PASS_SCORE" jdbcType="NUMERIC"/>
+		<result property="totalScore" column="TOTAL_SCORE" jdbcType="NUMERIC"/>
+		<result property="policyId" column="POLICY_ID" jdbcType="NUMERIC"/>
+		<result property="studentAnswerId" column="STUDENT_ANSWER_ID" jdbcType="NUMERIC"/>
+		<result property="objectiveQuestionScore" column="OBJECTIVE_QUESTION_SCORE" jdbcType="NUMERIC"/>
+		<result property="reviewStatus" column="REVIEW_STATUS" jdbcType="NUMERIC"/>
+	</resultMap>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT
+				EAS.ID AS　SCOPE_ID, 
+				EAS.NAME AS SCOPE_NAME,
+				SU.ID AS STUDENT_ID,
+				SU.ACCT AS STUDENT_ACCT,
+				SU.REAL_NAME AS STUDENT_NAME,
+				SU.NICKNAME AS NICK_NAME,
+				ESA.PAPERS_ID AS PAPER_ID,
+			 	EP.TOTLE_SCORE AS TOTAL_SCORE,
+			 	EP.EXAM_POLICY_ID AS POLICY_ID,
+				ESA.ID AS STUDENT_ANSWER_ID,
+				ESA.SCORE AS OBJECTIVE_QUESTION_SCORE,
+				ESA.REVIEW_STATUS AS REVIEW_STATUS,
+				EPY.EXAM_TIME_START AS EXAM_TIME,
+				EPY.NAME AS PAPER_NAME,
+				EPY.PASS_SCORE AS PASS_SCORE
+			FROM 
+				EXAM_POLICY EPY,
+				EXAM.APP_SCOPE EAS,
+				EXAM_SCOPE_POLICY_REL ESPR,
+				EXAM_PAPER EP,
+				EXAM_STUDENT_ANSWER ESA,
+				APP_SCOPE_USER_REL SUR,
+				SYS_USER SU
+			WHERE
+				EAS.ID=SUR.SCOPE_ID AND
+				EP.ID=ESA.PAPERS_ID AND 
+				SU.ID=ESA.STUDENT_ID AND 
+				SU.ID=SUR.USER_ID AND
+				ESPR.SCOPE_ID=EAS."ID" AND
+				ESPR.POLICY_ID=EP.EXAM_POLICY_ID AND
+				EPY.ID=EP.EXAM_POLICY_ID AND
+				ESA.ENABLED_FLAG=1 AND 
+				SU.ENABLED_FLAG=1 AND 
+				EP.ENABLED_FLAG=1 AND
+				ESA.STATUS=1
+		]]>
+		<if test="bo.studentName!=null" >
+			AND upper(SU.REAL_NAME) like upper('%${bo.studentName}%')
+		</if>
+		<if test="bo.reviewStatus!=null" >
+			AND ESA.REVIEW_STATUS=#{bo.reviewStatus}
+		</if>
+		<if test="bo.scopeId!=null" >
+			AND EAS.ID=#{bo.scopeId}
+		</if>
+			ORDER BY ESA.ID<if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+</mapper>
+
+
+

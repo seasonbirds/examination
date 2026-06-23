@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>厦门大学网络教育考试系统</title>
+<link rel="stylesheet" type="text/css" href="${webroot}/css/common.css" />
+<link rel="stylesheet" type="text/css"  href="${webroot}/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="${webroot}/css/colorbox.css" />
+<script type="text/javascript" src="${webroot}/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${webroot}/js/common.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="${webroot}/js/jquery.colorbox-zh.js"></script>
+<script type="text/javascript" src="${webroot}/js/jconfirmaction.jquery.js"></script>
+<script type="text/javascript" src="${webroot}/js/paginator.js"></script>	
+<script type="text/javascript" src="${webroot}/js/jquery.form.js"></script>
+</head>
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<body>
+<div id="main_container"> 
+	<!--头部begin-->
+	<div id="header">
+		<div class="logo"></div>
+		<div id="header_right">
+			<div id="header_welcome">欢迎您， <#if user.realName??>${user.realName}<#else>${user.acct}</#if>&nbsp;&nbsp;&nbsp;&nbsp; <a onclick="return confirm('提示：您确定要退出系统吗？')" href='${webServer}/vnetoo-cas/logout?service=${webServer}/examination' class="logout">退出</a></div>
+		</div>
+	</div>
+	<!--头部end-->
+	<div>
+			<div class="separate_div"></div>
+			
+			<table class="tblist f_tblist">
+				<caption>
+				考试demo列表	
+				</caption>
+			</table>
+				
+			<div id="page.result">
+				<#include "paperTest/data.htm">
+			</div>
+					
+			<@page.navigation/>
+			
+			<@page.init/>
+	</div>
+</div>
+</body>
+</html>
+
+<SCRIPT LANGUAGE="JavaScript">
+function applyExam(scopeId, obj){
+	obj.disabled = "true";
+	window.open("examPaper!goExam.action?scopeId="+scopeId);
+}
+
+function continueExam(scopeId, obj){
+	obj.disabled = "true";
+	window.open("examPaper!goContinueExam.action?scopeId="+scopeId);
+}
+
+function showExamResult(scopeId, obj){
+	//obj.disabled = "true";
+	window.open("examPaper!showExamResult.action?scopeId="+scopeId);
+}
+</SCRIPT>

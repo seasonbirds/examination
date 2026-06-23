@@ -1,0 +1,46 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" onclick="toggleSelect()"/></th>
+			<th>序号</th>
+		<th>&nbsp;帐号</th>
+		<th>&nbsp;真实姓名</th>
+		<th>&nbsp;备注</th>
+		<th>&nbsp;电子邮件</th>
+		<th>&nbsp;使用状态</th>
+		<th>&nbsp;创建人</th>
+		<th>&nbsp;登录次数</th>
+		<th>&nbsp;上次登陆时间</th>
+
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==0>class="even"</#if>>
+			<td>&nbsp;<input name="ids"  value="1233" type="checkbox"/></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+		<td>&nbsp;<#if item.acct??>${item.acct}</#if></td>
+		<td>&nbsp;<#if item.realName??>${item.realName}</#if></td>
+		<td>&nbsp;<#if item.memo??>${item.memo}</#if></td>
+		<td>&nbsp;<#if item.email??>${item.email}</#if></td>
+		<td>&nbsp;<#if item.status??>${item.status}</#if></td>
+		<td>&nbsp;<#if item.createdBy??>${item.createdBy?c!0}</#if></td>
+		<td>&nbsp;<#if item.logins??>${item.logins?c!0}</#if></td>
+		<td>&nbsp;<#if item.lastLoginTime??>${item.lastLoginTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
+
+			<td><a class="f_tblist_show"  href="core/major/major-show.html"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a class="f_tblist_edit"  href="core/major/major-input.html"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="f_single_delete" href="#"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="13"/>
+	</tbody>	
+</table>
+
+
+

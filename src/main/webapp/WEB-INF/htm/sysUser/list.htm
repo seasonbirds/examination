@@ -1,0 +1,151 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form">
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>帐号：</th>
+				<td>&nbsp;<input type="text" id="sysUser.acct"/></td>
+			</tr>
+			<tr>
+				<th>真实姓名：</th>
+				<td>&nbsp;<input type="text" id="sysUser.realName"/></td>
+			</tr>
+			<tr>
+				<th>电子邮件：</th>
+				<td>&nbsp;<input type="text" id="sysUser.email"/></td>
+			</tr>
+			<tr>
+				<th>使用状态：</th>
+				<td>&nbsp;<input type="text" id="sysUser.status"/></td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:search()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	用户信息表列表
+	<span class="operate_list"> 
+		<a class="bt_blue_30 f_add_operate" href="core/major/major-input.html">添加</a>
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a> 		
+		<a class="bt_blue_30 f_batch_operate" href="#">导出</a> 
+	</span>
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "data.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+//查询方法 dragSearch 是否是拖动查询,默认不是
+function search(dragSearch){
+	
+	var map=new Map();	
+	map.put("sysUser.acct","'"+document.getElementById("sysUser.acct").value+"'");
+	map.put("sysUser.realName","'"+document.getElementById("sysUser.realName").value+"'");
+	map.put("sysUser.email","'"+document.getElementById("sysUser.email").value+"'");
+	map.put("sysUser.status","'"+document.getElementById("sysUser.status").value+"'");
+
+	paginatorSearch('${webroot}/sysUser!search.action',map,dragSearch);
+}
+
+//窗口
+var addSysUserFrm=new Frame("新增用户信息表",600,300,"showWnd");
+function showWnd(){
+	addSysUserFrm.center();
+	addSysUserFrm.showModel();
+	hiddenWaitBar();
+}
+
+//新增用户信息表
+function addSysUser(){
+	showWaitBar();
+	addSysUserFrm.setTitle("新增用户信息表");
+	addSysUserFrm.setUrl("${webroot}/SysUser!toCreateOrUpdate.action");
+}
+
+//编辑用户信息表
+function editSysUser(id){
+	showWaitBar();
+	addSysUserFrm.setTitle("修改用户信息表信息");
+	addSysUserFrm.setUrl("${webroot}/SysUser!toCreateOrUpdate.action?sysUser.id="+id);
+}
+
+//删除用户信息表
+function removeSysUser(id){
+	if(!confirm("确定要删除该记录吗？"))
+		return;
+		
+	showWaitBar();
+	jQueryPost("${webroot}/SysUser!remove.action",{
+		"sysUser.id":id
+		},
+		function(status,msg){
+			hiddenWaitBar();
+			if(status==0){
+				cancelAll();
+				alertSync("删除用户信息表信息成功！","search");
+			}else{
+				alertInfo("删除用户信息表信息失败！",msg);
+			}
+	});	
+}
+
+//批量删除操作
+function batchDeal(){
+	//alert(selectList.toString());
+	if(selectList.size()==0){
+		jAlertError("没有选中记录");
+		return;
+	}
+	if(!confirm("确定要删除所有选中的 "+selectList.size()+" 个记录吗？"))
+		return;
+	showWaitBar();	
+	jQueryPost("${webroot}/SysUser!batchRemove.action",{
+		"sysUser.removeIds":selectList.getData()
+		},
+		function(status,msg){
+			hiddenWaitBar();
+			if(status==0){
+				cancelAll();
+				alertSync("删除用户信息表信息成功！","search");				
+			}else{
+				alertInfo("删除用户信息表信息失败！",msg);
+			}
+	});	
+}
+
+//-->
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,130 @@
+<!--编辑表格begin-->
+<#escape x as x?html>
+<div class="input_box" style="width:800px">
+	<form id="tb_input" method="post">
+		<div class="box_title">${examPolicy.name}</div>
+		<div class="box_content">
+			<#assign typeIndex=0>
+			<#if singleList?? && ((singleList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.SINGLE")}(共 ${singleList?size}题)</caption>
+					<tbody>
+						<#list singleList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<#list item.answerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}
+										<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+									</#list>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if multList?? && ((multList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.MULT")}(共 ${multList?size}题)</caption>
+					<tbody>
+						<#list multList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<#list item.answerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}
+										<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+									</#list>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if judgeList?? && ((judgeList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.JUDGE")}(共 ${judgeList?size}题)</caption>
+					<tbody>
+						<#list judgeList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<#list item.answerList as answerItem>
+										&nbsp;&nbsp;&nbsp;&nbsp;(${answerItem.answerIdx})&nbsp;${answerItem.content}
+										<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+									</#list>
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if clozeList?? && ((clozeList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.CLOZE")}(共 ${clozeList?size}题)</caption>
+					<tbody>
+						<#list clozeList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if explainList?? && ((explainList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.EXPLAIN")}(共 ${explainList?size}题)</caption>
+					<tbody>
+						<#list explainList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+			<#if qnqList?? && ((qnqList?size)>0) >
+				<#assign typeIndex=typeIndex+1>
+				<table class="tb_input" >
+					<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.QNQ")}(共 ${qnqList?size}题)</caption>
+					<tbody>
+						<#list qnqList as item>
+							<tr>
+								<td>
+									&nbsp;(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+								</td>
+							</tr>
+						</#list>
+					</tbody>
+				</table>
+			</#if>
+		</div>
+		<div class="box_foot" id="foot">
+			<div class="box_foot_buttons" id="footDiv">
+				<a class="bt_blue" href="javascript:void(0)" onclick="$.colorbox.close()">返 回</a>
+			</div>
+		</div>
+	</form>
+</div>
+</#escape>

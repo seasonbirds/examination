@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>${webTitle}</title>
+<link rel="stylesheet" href="${webroot}/css/bkwhite.css" type="text/css">
+<script type="text/javascript" src="${webroot}/js/myframe.js"></script>
+<SCRIPT type="text/javascript" src="${webroot}/js/waitbar.js"></SCRIPT>
+<style>
+	.waitdiv {CURSOR:wait;BORDER-RIGHT: 0px ridge; BORDER-TOP: 0px ridge; Z-INDEX: 200; LEFT: 250px; VISIBILITY: hidden; 
+	BORDER-LEFT: 0px ridge; WIDTH: 363px; PADDING-TOP: 0px; BORDER-BOTTOM: 0px ridge; POSITION: absolute; TOP: 200px; HEIGHT: 215px; }
+	table.waitbar {background: url(img/loading1.8sec.gif); height:121px;width:352px; text-align:center}
+</style>
+</head>
+<iframe id="WaitBarFrm" style="position:absolute;left:0px;top:0px;width:100px;height:100px;display:none;z-index:10000;opacity:0.3;!important;filter:alpha(opacity=30);
+background-color:#00000A;" frameBorder="0"></iframe>
+ <div id="WaitBar" class="waitdiv" >
+	<center>
+		<table class="waitbar">
+			<tr >
+				<td ></td>				
+			</tr>
+		</table>
+	</center>
+ </div>
+<body style="overflow-x:hidden;overflow-y:hidden;" onload="getinfo();" >
+<div id="topJsp" style="min-width:800px">
+	<#include "top.htm"/>
+</div>
+<div style="width:100%;background:#fff;height:10px">
+	<a href="#" style="background:url(${webroot}/img/fullscreen.gif) no-repeat;width:119px;height:9px;text-align:center;margin:0 auto;overflow:hidden;display:block" onclick="fullscreen()" id="tbk" onmouseover="tabbk()" onmouseout="tabbk1()">
+		<div id="dplay1" style="background:url(${webroot}/img/xup.gif) no-repeat;width:7px;height:4px;margin:2px auto 0;overflow:hidden">
+		</div>
+		<div id="dplay2" style="display:none;background:url(${webroot}/img/xdown.gif) no-repeat;width:7px;height:4px;overflow:hidden;margin:2px auto 0">
+		</div>
+	</a>
+</div>
+
+<script type="text/javascript">
+	function tabbk(){
+		document.getElementById("tbk").style.background="url(${webroot}/img/fullscreenh.gif)"
+	}
+	function tabbk1(){
+		document.getElementById("tbk").style.background="url(${webroot}/img/fullscreen.gif)"
+	}
+	
+	function fullscreen(){
+		var topJsp = document.getElementById("topJsp");
+		if(topJsp.style.display!="none"){
+			//top隐藏 186
+			topJsp.style.display="none";
+			document.getElementById("dplay2").style.display="block";
+			document.getElementById("dplay1").style.display="none";
+			document.getElementById("mainFrame").style.height=(document.getElementById("mainFrame").clientHeight+186)+'px';
+		}else{
+			//top显示
+			topJsp.style.display="block";
+			document.getElementById("dplay1").style.display="block";
+			document.getElementById("dplay2").style.display="none";
+			document.getElementById("mainFrame").style.height=(document.getElementById("mainFrame").clientHeight-186)+'px';
+		}
+	}
+	
+</script>
+	<div align="center">
+		<Iframe id="mainFrame" name="mainFrame" src="" scrolling="yes" frameborder="0" width="100%"></iframe>
+	</div>
+</body>
+</html>
+<SCRIPT LANGUAGE="JavaScript">
+function checkMenuRight(rootId,id){
+	$("#mainFrame").attr("src","${webroot}/login!checkMenuRight.action?user.menuParentId="+rootId+"&user.menuId="+id);  
+}
+var targetEle = 0;
+function getinfo()
+{
+	if(document.documentElement.clientHeight - 210 < 0){
+		document.getElementById("mainFrame").style.height = 0 + "px";
+	}else{
+		document.getElementById("mainFrame").style.height = document.documentElement.clientHeight - 210 + "px";
+	}
+	if(document.documentElement.offsetWidth - 20 < 0){
+		document.getElementById("mainFrame").style.width = 0 + "px";
+	}else{
+		document.getElementById("mainFrame").style.width = document.documentElement.offsetWidth - 20 + "px";
+	}
+	window.onresize=function(){
+		if(document.documentElement.clientHeight - 210 < 0){
+			document.getElementById("mainFrame").style.height = 0 + "px";
+		}else{
+			var topJsp = document.getElementById("topJsp");
+			if(topJsp.style.display!="none"){
+				document.getElementById("mainFrame").style.height = document.documentElement.clientHeight - 210 + "px";
+			}else{
+				document.getElementById("mainFrame").style.height = document.documentElement.clientHeight - 15 + "px";
+			}
+		}
+		if(document.documentElement.offsetWidth - 20 < 0){
+			document.getElementById("mainFrame").style.width = 0 + "px";
+		}else{
+			document.getElementById("mainFrame").style.width = document.documentElement.offsetWidth - 20 + "px";
+		}
+	}	
+			
+}
+//获得一个可移动层
+function Proxy(title,width,height,model){
+	var w=new Frame(title,width,height,true);
+	return w;
+}
+//获得最根部的frame
+function getMainFrame(){
+	return frames["mainFrame"];
+}
+//根据所创建的frameId获得该frame
+function getWindowFrame(frameId){
+	return frames[frameId];
+}
+
+</SCRIPT>

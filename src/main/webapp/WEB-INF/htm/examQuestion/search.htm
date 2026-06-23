@@ -1,0 +1,408 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form" action="${webroot}/examQuestion!query.action">
+<table class="tb_query">
+	<tbody>
+		<tr>
+			<th>所属课程：</th>
+			<td><select id="examQuestion.courseId" name="examQuestion.courseId"></select></td>
+			<th>题目类型：</th>
+			<td><@enum.select id="examQuestion.type" type="com.vnetoo.examination.enums.QuestionType" header="true" default=""/></td>
+		</tr>
+		<tr>
+			<th>题目难度：</th>
+			<td><@enum.select id="examQuestion.lev" type="com.vnetoo.examination.enums.QuestionLevel" header="true" default=""/></td>
+			<th>题目范围：</th>
+			<td><@enum.select id="examQuestion.rangeType" type="com.vnetoo.examination.enums.QuestionRangeType" header="true" default=""/></td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:pageQuery()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+<input type="hidden" id="comboboxHeader" value="${resourceBundle('select.header')}" />
+</form>
+
+<div class="separate_div"></div>
+
+<table class="tblist f_tblist">
+	<caption>
+	试题列表
+	<span class="operate_list"> 
+		<!--<a class="bt_blue_30 f_add_operate" href="core/major/major-input.html">添加</a>-->
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a> 
+		<a class="bt_blue_30 f_batch_operate" href="javascript:void(0)" onclick="showImport()">导入</a>		
+		<a class="bt_blue_30 f_batch_operate" href="#">导出</a> 
+	</span>
+	</caption>
+</table>
+
+<div id="page.result">
+	<#include "list.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+
+<div class="hide">
+	<div class="input_box" id="importDialog">
+		<form id="dialogForm" enctype="multipart/form-data">
+			<div class="box_title">导入试题</div>
+			<div class="box_content">
+			<table class="tb_input" >
+			<tbody>
+				<tr>
+					<th>考试类型</th>
+					<td>
+						<@enum.select id="QuestionRangeType" type="com.vnetoo.examination.enums.QuestionRangeType" header="false" default=""/>
+					</td>
+				</tr>
+				<tr>
+					<th>课程</th>
+					<td>
+						<select id="courseId" name="courseId" class="select_input"></select>
+					</td>
+				</tr>
+				<tr>
+					<th>知识点 <strong class="red"></strong></th>
+					<td>
+						<input id="keyPointId" name="keyPointId" type="hidden" />
+						<input id="selectKeyPointId" type="text" class="select_input" readonly=true></input>
+					</td>
+				</tr>
+				<tr>
+					<th>请选择文件 <strong class="red">*</th>
+					<td>
+						<input type="text" id="selectFileName"  class="select_input" readonly=true/>
+						<input type="button" value="浏览..." style="width:auto;" onclick="showFileDialog()" id="fileShowButton" />
+						<input type="file" name="question" id="fileButton" class="hide" onchange="fileChange()" />
+					</td>
+				</tr>
+				<tr>
+					<th>导入结果 </th>
+					<td>
+						<div id="errorTip" ></div>
+					</td>
+				</tr>
+			</tbody>
+			</table>
+			</div>
+			<div class="box_foot">
+				<div class="box_foot_buttons">
+					<a class="bt_green" href="javascript:void(0)" onclick="importQuestion();">导入</a>
+					<a class="bt_blue" href="${webroot}/model/importExamQuestionTemplate.xls" >下载模板</a>
+				</div>
+			</div>
+			</form>
+		</div>
+</div>
+<div id="selectTree">
+	<ul id="keyPointTree" class="ztree" style="margin-top:0; width:200px;height:300px;overflow:auto"></ul>
+</div>
+
+<SCRIPT LANGUAGE="JavaScript">
+/**
+ * 显示导入对话框
+ */
+function showImport(){
+	clean();//显示前先清除页面数据和错误样式
+	isValid=true;
+	$.colorbox({
+		opacity:0.9,
+		href:"#importDialog",
+		inline:true,
+		close:"close"
+	});
+}
+
+/**
+ * 下拉树的配置选项
+ */
+var setting = {
+	view: {
+		dblClickExpand: false
+	},
+	data: {
+		simpleData: {
+			enable: true,
+			idKey:"id",
+			pIdKey:"pid",
+			rootPId: 0
+		}
+	},
+	async: {
+		enable: true,
+		url:function(){return "examKeyPoint!getKeyPointTree.action?examKeyPoint.courseId="+$("#courseId").val(); },//每次刷新取选择的课程作参数
+		type:"get"
+	},
+	callback: {
+		//树节点点击时给隐藏域Id和显示名赋值,触发onchang事件，设置表单验证并隐藏树
+		onClick:function(event,treeId,treeNode){
+			var zTree = $.fn.zTree.getZTreeObj("keyPointTree");
+			var nodes = zTree.getSelectedNodes();
+			$("#keyPointId").val(nodes[0].id);
+			
+			var a = new Array();
+			a.push(nodes[0].name);
+			var node = nodes[0].getParentNode();
+			while(node != null){
+				a.push(node.name);
+				node = node.getParentNode();
+			}
+			var parentName = "";
+			for(var i=a.length-1; i>=0; i--){
+				parentName += a[i];
+				if(i != 0){
+					parentName += ";";
+				}
+			}
+			$("#selectKeyPointId").val(parentName);
+			//$("#selectKeyPointId").change();
+			isValid = true;
+			hideMenu();
+		}
+	}
+};
+
+/**
+ * 点击浏览按钮触发文件选择框(默认文件选择控件被隐藏)
+ */
+function showFileDialog(){
+	$("#fileButton").click();
+}
+
+/**
+ * 显示下拉树
+ */
+function showKeyPointTree() {
+	var select = $("#selectKeyPointId");
+	var selectOffset = $("#selectKeyPointId").offset();
+	$("#selectTree").css({left:selectOffset.left + "px", top:selectOffset.top + select.outerHeight() + "px"}).slideDown("fast");
+	$("body").bind("mousedown", onBodyDown);
+}
+
+/**
+ * 隐藏下拉树
+ */
+function hideMenu() {
+	$("#selectTree").fadeOut("fast");
+	$("body").unbind("mousedown", onBodyDown);
+}
+
+/**
+ * 鼠标按下事件函数
+ */
+function onBodyDown(event) {
+	if (!(event.target.id == "selectTree" || $(event.target).parents("#selectTree").length>0)) {
+		hideMenu();
+	}
+}
+
+/**
+ * 选择文件后，输入框显示文件名并触发输入框的onchange事件，设置表单验证，清除错误提示
+ */
+function fileChange(){
+	var fileName = $("#fileButton").val();
+	$("#selectFileName").val(fileName);
+	$("#selectFileName").change();
+	isValid = true;
+	$("#errorTip").html("");
+}
+
+/**
+ * 导入按钮函数，先验证表单，再异步提交
+ */
+function importQuestion(){
+	//判断表单是否需要验证，首次提交，表单域改变都需要验证
+	if(!validate()){
+		return false;
+	}
+	showWaitBar();
+	$("#dialogForm").ajaxSubmit({
+		url:"${webroot}/examQuestion!upload.action",
+		type:"POST",
+		dataType:"json",
+		success:function(response){
+			hiddenWaitBar();
+			$("#errorTip").html("<font style='color:red;'>" + response.msg + "</font>");
+		}
+	});
+}
+
+var isValid = true;
+/**
+ * 验证表单域
+ */
+function validate(){
+	if(!isValid){
+		return false;
+	}
+	//分别验证表单域
+	/*var	result1 = $("#selectKeyPointId").myValid({
+		rules:{
+			required:true
+		},
+		messages:{
+			required:"请选择知识点"
+		}
+	});*/
+	var	result2 = $("#selectFileName").myValid({
+		rules:{
+			required:true,
+			fileType:["xls","xlsx"]
+		},
+		messages:{
+			required:"请选择文件",
+			fileType:"仅支持.xls或.xlsx格式的文件"
+		}
+	});
+	var result = false;
+	//所有表单域通过验证，则表单验证通过
+	if(result2){
+		result = true;
+	}
+	isValid = false;
+	return result;
+}
+
+/**
+ * 清除表单域的值，并触发onchange事件，以便清除错误样式
+ */
+function clean(){
+	$("input[type='text']").val("");
+	$("input[type='text']").change();
+	$("#courseId").find("option").eq(0).attr('selected', 'true');
+}
+
+$(function(){
+	//选择课程改变时，知识点下拉树刷新，获取选择课程的知识点
+	$("#courseId").change(function(){
+		selectCourseId = $("#courseId").val();
+		var tree = $.fn.zTree.getZTreeObj("keyPointTree");
+		tree.reAsyncChildNodes(null, "refresh");
+		isValid = true;
+	});
+	//知识点显示框获得焦点时显示下拉树
+	$("#selectKeyPointId").focus(function(){
+		showKeyPointTree();
+	});
+
+	//加载课程下拉框
+	$.post("${webroot}/appCourse!getCourseList.action",function(response){
+		if(response.result == "success"){
+			var options = "";
+			var data = response.data;
+			for(var i=0; i<data.length; i++){
+				options += "<option value='" + data[i].id + "'>" + data[i].name + "</option>";
+			}
+			//搜索选项-课程下拉框初始化
+			$("#examQuestion\\.courseId").html("<option value='' selected>---" + $("#comboboxHeader").val() + "---</option>" + options);
+			//导入试题对话框-课程下拉框初始化
+			$("#courseId").html(options);
+			$("#courseId").get(0).selectedIndex=1;
+			$.fn.zTree.init($("#keyPointTree"), setting);
+		}else{
+			jAlertError(response.msg);
+		}
+
+	},"json");
+	
+	$('.f_add_operate').colorbox();
+	$('.f_tblist_edit').colorbox();
+	$('.f_tblist_show').colorbox();
+	
+	$('.f_batch_delete').bind('click', function(event){
+		if(selectList.size()==0){
+			$(this).tip({content:"请选择要操作的数据"});
+			event.stopImmediatePropagation();
+			event.preventDefault();
+			$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+		}		
+	});
+	$('.f_batch_delete').jConfirmAction({
+			question:"确定删除选中的 记录吗？",
+			yesAnswer:"是",cancelAnswer:"否",
+			yesAction:function($this){
+				jQueryPost("${webroot}/examQuestion!batchRemove.action",{
+					"examQuestion.ids":selectList.getData()
+					},
+					function(result,msg){
+						if(result==0){
+							pageQuery();						
+							jAlert("删除试题成功！");				
+						}else{
+							jAlertError("删除试题失败！"+msg);
+						}
+				});	
+			}
+	});
+})
+
+/**
+ * 自定义表单域的验证函数
+ */
+$.fn.extend({
+	myValid:function(option){
+		this.data("option",option);
+		//绑定onchange事件，清除错误样式
+		$(this).change(function(){
+			if($(this).attr("class").indexOf("filedError") > -1){
+				$(this).removeClass("filedError");
+			}
+			var br = $(this).parent().find("br");
+			if(br != undefined && br != null){
+				br.remove();
+			}
+			
+			var errorMsg = $(this).parent().find("label");
+			if(errorMsg != undefined && errorMsg != null){
+				errorMsg.remove();
+			}
+		});
+		//验证required
+		if(option.rules.required){
+			var value = $(this).val();
+			if(value == undefined || value == null || $.trim(value) == ""){
+				this.showError(option.messages.required);
+				return false;
+			}
+		}
+		//验证fileType，仅针对域的值，不校验域是否是文件控件
+		if(option.rules.fileType){
+			var value = $(this).val();
+			if(value == undefined || value == null || $.trim(value) == ""){
+				return true;
+			}
+			
+			var suffix = value.substring(value.lastIndexOf(".") + 1);
+			var index = 0;
+			for(; index<option.rules.fileType.length; index++){
+				if(option.rules.fileType[index] == suffix){
+					break;
+				}
+			}
+			if(index >= option.rules.fileType.length){
+				this.showError(option.messages.fileType);
+				return false;
+			}
+		}
+		return true;
+	},
+	//显示错误样式，文件域在其下显示，其它域在其后显示
+	showError:function(errorMsg){
+		if($(this).is("input") || $(this).is("select")){
+			if($(this).attr("class").indexOf("filedError") < 0){
+				$(this).addClass("filedError");
+				$("<label style='color:red;'>" + errorMsg + "</label>").appendTo($(this).parent());
+			}
+		}
+	}
+})
+
+</SCRIPT>

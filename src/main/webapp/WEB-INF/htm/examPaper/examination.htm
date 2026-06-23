@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>${examPolicy.name!}</title>
+<style>
+body{width:1024px;text-align:center;margin:0 auto;}
+.examPaper{width:100%;background-color: #FFFFFF;margin-left:10%;}
+table{text-align:left;}
+table caption{text-align: left;}
+.examPaperTitle{text-align:center;font-weight:bold;letter-spacing:5px;}
+.examPaperTime{text-align:center;}
+.popBtn{ text-align:center; margin:15px 0 20px 0;}
+.btn{ background:url(${webRoot}/img/btn.gif) repeat-x; border:1px solid #aadde8; color:#1379b4; line-height:22px; height:22px; display: inline-block; padding:0 14px; margin-right:18px;}
+.main{min-width:370px;border:5px solid #c4c4c4}
+.yx a img{border:none}
+.yx a{border:none;opacity:0.5;width:35px;height:35px}
+.yx a:hover{opacity:0.9}
+.bor{border-bottom:1px solid #a9a9a9}
+.pd1{padding:0 10px;}
+.pd1 tr td{font-size:14px;color:#fff;font-weight:bolder}
+.pd table{border-top:1px solid #b5b5b5;border-right:1px solid #b5b5b5}
+.pd table tr td{border-left:1px solid #b5b5b5;border-bottom:1px solid #b5b5b5;font-weight:bolder;font-family:"����";font-size:12px;}
+.mistake{background:#dadada}
+a{text-decoration:none}
+a:link{text-decoration:none}
+a:hover{text-decoration:none}
+a:visited{text-decoration:none}
+/*********等待提示开始************/
+.waitdiv {CURSOR:wait;BORDER-RIGHT: 0px ridge; BORDER-TOP: 0px ridge; Z-INDEX: 99999; LEFT: 250px; display:none;text-align:bottom;
+	BORDER-LEFT: 0px ridge; WIDTH: 363px; PADDING-TOP: 0px; BORDER-BOTTOM: 0px ridge; POSITION: absolute; TOP: 200px; HEIGHT: 215px; }
+table.waitbar {background: url(${webRoot}/img/loading2.gif) no-repeat; height:100px;width:352px; text-align:bottom;
+	background-position: center;background-attachment: fixed;}
+.fonthightLight{width:200px;background-color: #ffffff;opacity:1;!important;filter:alpha(opacity=100);}
+
+/**********等待提示结束***********/
+</style>
+<link rel="stylesheet" type="text/css" href="${webRoot}/js/jAlert/jquery.alerts.css" />
+<script type="text/javascript" src="${webRoot}/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="${webRoot}/js/jAlert/jquery.alerts.js"></script>
+<script type="text/javascript" src="${webRoot}/js/waitbar.js"></script>
+<script type="text/javascript" src="${webRoot}/js/paginator.js"></script>
+<script type="text/javascript" src="${webRoot}/js/examPaper.js"></script>
+<script type="text/javascript">
+/*window.onbeforeunload = function(){
+	if(totalTime > 0){
+		return "";	
+	}
+}*/
+
+$(function(){
+	webRoot = "${webRoot}";
+	answerCardScroll();
+	window.onscroll=answerCardScroll;
+	window.onresize=answerCardScroll;
+	//totalTime = parseInt($("#hastime").html()) * 60;
+	fillAnswer(location.search);
+	
+	//goThread();
+})
+</script>
+</head>
+<body>
+	<iframe id="WaitBarFrm" style="position:absolute;left:0px;top:0px;width:100px;height:100px;display:none;z-index:10000;opacity:0.5;!important;filter:alpha(opacity=50);
+	background-color:#00000A;" frameBorder="0"></iframe>
+<div id="WaitBar" class="waitdiv" >
+	<center>
+		<table class="waitbar">
+			<tr >
+				<td></td>				
+			</tr>
+		</table>
+		<div ><div class="fonthightLight">处理中，请稍等...</div></div>
+	</center>
+</div>
+	<#escape x as x?html>
+	<#setting number_format="#">
+	<div class="examPaper" style="width:800px">
+		<form method="post">
+			<div class="examPaperTitle">${examPolicy.name}</div>
+			<div class="examPaperTime">考试时间：<u>${examPolicy.examTimeStart?string('yyyy-MM-dd HH:mm:ss')}</u>&nbsp;至&nbsp;<u>${examPolicy.examTimeEnd?string('yyyy-MM-dd HH:mm:ss')}</u>&nbsp;共&nbsp;<u>${examPolicy.time!0}</u>&nbsp;分钟</div>
+			<input type="hidden" name="paperGuid" id="paperGuid" value=${paperGuid} />
+			<div>
+				<#assign questionCount=0>
+				<#assign typeIndex=0>
+				<#if singleList?? && ((singleList?size)>0) >
+					<#assign questionCount=questionCount+(singleList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.SINGLE")}(共 ${singleList?size}题)</caption>
+						<tbody>
+							<#list singleList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<#list item.answerList as answerItem>
+											&nbsp;&nbsp;&nbsp;${answerItem.answerIdx!}
+											<input onclick="chooseAnswer(${item.questionId})" type="radio" id="${answerItem.id}" name="result${item.questionId}" value="${answerItem.id}"/>
+											${answerItem.content}
+											<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+										</#list>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if multList?? && ((multList?size)>0) >
+					<#assign questionCount=questionCount+(multList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.MULT")}(共 ${multList?size}题)</caption>
+						<tbody>
+							<#list multList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<#list item.answerList as answerItem>
+											&nbsp;&nbsp;&nbsp;${answerItem.answerIdx!}
+											<input onclick="chooseAnswer(${item.questionId})" type="checkbox" id="${answerItem.id}" name="result${item.questionId}" value="${answerItem.id}"/>
+											${answerItem.content}
+											<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+										</#list>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if judgeList?? && ((judgeList?size)>0) >
+					<#assign questionCount=questionCount+(judgeList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.JUDGE")}(共 ${judgeList?size}题)</caption>
+						<tbody>
+							<#list judgeList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<#list item.answerList as answerItem>
+											&nbsp;&nbsp;&nbsp;${answerItem.answerIdx!}
+											<input onclick="chooseAnswer(${item.questionId})" type="radio" id="${answerItem.id}" name="result${item.questionId}" value="${answerItem.id}"/>
+											${answerItem.content}
+											<#if answerItem_index+1 != (item.answerList?size)><br></#if>
+										</#list>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if clozeList?? && ((clozeList?size)>0) >
+					<#assign questionCount=questionCount+(clozeList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table >
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.CLOZE")}(共 ${clozeList?size}题)</caption>
+						<tbody>
+							<#list clozeList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<textarea rows="2" cols="80" id="textarea_${item.questionId}" onchange="changeAnswer(${item.questionId})"></textarea>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if explainList?? && ((explainList?size)>0) >
+					<#assign questionCount=questionCount+(explainList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.EXPLAIN")}(共 ${explainList?size}题)</caption>
+						<tbody>
+							<#list explainList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<textarea rows="5" cols="80" id="textarea_${item.questionId}" onchange="changeAnswer(${item.questionId})"></textarea>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+				<#if qnqList?? && ((qnqList?size)>0) >
+					<#assign questionCount=questionCount+(qnqList?size)>
+					<#assign typeIndex=typeIndex+1>
+					<table>
+						<caption>${typeIndex}.&nbsp;${resourceBundle("QuestionType.QNQ")}(共 ${qnqList?size}题)</caption>
+						<tbody>
+							<#list qnqList as item>
+								<tr>
+									<td>
+										&nbsp;<a name="divTg${item.questionId}" />(${item_index+1}).&nbsp;${item.questionContent}(${item.questionScore}分)
+									</td>
+								</tr>
+								<tr>
+									<td>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+										<textarea rows="5" cols="80" id="textarea_${item.questionId}" onchange="changeAnswer(${item.questionId})"></textarea>
+									</td>
+								</tr>
+							</#list>
+						</tbody>
+					</table>
+				</#if>
+			</div>
+			<div class="popBtn btn"><a href="javascript:void(0)" onclick="manualsubmit()">交卷</a></div>
+		</form>
+	</div>
+	</#escape>
+	
+	 <div id="Javascript.Div5" style="position:absolute;z-index:1000;background: #FFFFFF;">
+			<div align="right" style="padding-bottom:3px;" class="yx"><a href="#"><img src="${webRoot}/img/down.gif" id="mg" onclick="disb()" title="隐藏窗口"></a></div>
+			<table class="main" cellpadding="0" cellspacing="0">
+				<tr>
+					<td height="29" bgcolor="#3aa3d4">
+						<table width="100%" class="pd1" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="left">
+									离考试结束还有：
+								</td>
+								<td>
+									<span id="hastime" style="color:#000">${examPolicy.time}</span>
+								</td>
+								<td align="right">
+									未答题还有：
+								</td>
+								<td>
+									<span id="examCount" style="color:#ff0000">${questionCount}</span>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>		
+				<tr>
+					<td height="21" bgcolor="f2f2f2" class="bor" id="disnb4">
+					</td>
+				</tr>
+				<tr>
+					<td class="pd" align="center" id="disnb3">
+						<table cellspacing="0" cellpadding="0" id="disnb1" border="0" id="answerCard">
+						<#if singleList?? && ((singleList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.SINGLE")}
+								</td>
+							</tr>
+							<tr>
+							<#list singleList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==singleList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						<#if multList?? && ((multList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.MULT")}
+								</td>
+							</tr>
+							<tr>
+							<#list multList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==multList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						<#if judgeList?? && ((judgeList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.JUDGE")}
+								</td>
+							</tr>
+							<tr>
+							<#list judgeList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==judgeList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						<#if clozeList?? && ((clozeList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.CLOZE")}
+								</td>
+							</tr>
+							<tr>
+							<#list clozeList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==clozeList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						<#if explainList?? && ((explainList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.EXPLAIN")}
+								</td>
+							</tr>
+							<tr>
+							<#list explainList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==explainList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						<#if qnqList?? && ((qnqList?size)>0) >
+							<tr>
+								<td colspan="10" align="left">
+									${resourceBundle("QuestionType.QNQ")}
+								</td>
+							</tr>
+							<tr>
+							<#list qnqList as item>
+								<#if (item_index!=0)&&(item_index%10==0)>
+								</tr><tr>
+								</#if>
+									<td id="td${item.questionId}" width="37" height="37" align="center" valign="middle">
+									<a href="#divTg${item.questionId}">${item_index+1}</a>
+									</td>
+								<#if (item_index+1==qnqList?size)&&(item_index%10<9)>
+									<#list 1..(10-1-item_index%10) as indexItem>
+										<td width="37" height="37" align="center" valign="middle" style="backgroud-color:#dadada">&nbsp;</td>
+									</#list>
+								</#if>
+							</#list>
+							</tr>
+						</#if>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table cellspacing="0" cellpadding="0" width="100%" id="disnb2" height="37">
+							<tr>
+								<td background="${webRoot}/img/btbk.gif">
+								
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+	
+			</table>
+		</div>
+</body>
+</html>

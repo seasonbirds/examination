@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamAnswer">
+	
+	<resultMap id="result" type="ExamAnswer">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="content" column="CONTENT" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="valid" column="VALID" jdbcType="VARCHAR"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>
+		<result property="answerIdx" column="ANSWER_IDX" jdbcType="VARCHAR"/>
+		<result property="questionId" column="QUESTION_ID" jdbcType="NUMERIC"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamAnswer">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_ANSWER.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_ANSWER(
+				ID,
+				CONTENT,
+				VALID,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				ANSWER_IDX,
+				QUESTION_ID
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{content,jdbcType=BLOB},
+				#{valid,jdbcType=VARCHAR},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 ,
+				#{answerIdx,jdbcType=VARCHAR},
+				#{questionId,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamAnswer">
+		<![CDATA[
+			UPDATE EXAM_ANSWER SET  
+				CONTENT=#{content,jdbcType=BLOB},
+				VALID=#{valid,jdbcType=VARCHAR},
+				LAST_UPDATE_DATE=SYSDATE,
+				LAST_UPDATED_BY=#{lastUpdatedBy,jdbcType=NUMERIC}, 
+				ANSWER_IDX=#{answerIdx,jdbcType=VARCHAR}
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_ANSWER SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_ANSWER WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_ANSWER
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamAnswer"  resultMap="result">
+		<![CDATA[
+			SELECT 
+				ID,
+				CONTENT,
+				VALID,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG,
+				ANSWER_IDX,
+				QUESTION_ID
+			FROM 
+				EXAM_ANSWER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="content!=null" >
+			AND CONTENT=#{content}
+		</if>
+		<if test="valid!=null" >
+			AND upper(VALID) like upper('%${valid}%')
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+		<if test="answerIdx!=null" >
+			AND upper(ANSWER_IDX) like upper('%${answerIdx}%')
+		</if>
+		<if test="questionId!=null" >
+			AND QUESTION_ID=#{questionId}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_ANSWER
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.content!=null" >
+			AND CONTENT=#{bo.content}
+		</if>
+		<if test="bo.valid!=null" >
+			AND upper(VALID) like upper('%${bo.valid}%')
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+		<if test="bo.answerIdx!=null" >
+			AND upper(ANSWER_IDX) like upper('%${bo.answerIdx}%')
+		</if>
+		<if test="bo.questionId!=null" >
+			AND QUESTION_ID=#{bo.questionId}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<select id="getAllAnswersByPaperId" parameterType="java.lang.Integer" resultMap="result">
+		SELECT 
+			*
+		FROM 
+			EXAM_ANSWER,EXAM_PAPER_QUESTION_REL,EXAM_QUESTION
+		WHERE
+			EXAM_QUESTION."ID"=EXAM_ANSWER.QUESTION_ID AND
+			EXAM_QUESTION."ID"=EXAM_PAPER_QUESTION_REL.QUESTION_ID AND
+			EXAM_QUESTION.ENABLED_FLAG=1 AND
+			EXAM_ANSWER.ENABLED_FLAG=1 AND
+			EXAM_PAPER_QUESTION_REL.PAPERS_ID=#{paperId}
+		ORDER BY EXAM_ANSWER.ID
+	</select>
+	
+</mapper>
+
+
+

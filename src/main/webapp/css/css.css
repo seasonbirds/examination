@@ -1,0 +1,15 @@
+/* CSS Document */
+body,p,ul,li,dl,dt,dd,h1,h2,h3,h4,h5,h6{margin:0;padding:0}
+html,body{height:100%}
+body{background:url(../img/bodybk.gif) repeat-x top #FFF}
+.tl{float:left;width:15px;height:31px;background:url(../img/textlbk.gif)}
+.tm{float:left;width:211px;height:29px;border-top:1px solid #034579;border-bottom:1px solid #034579;background:#FFF}
+.tm1{float:left;width:50px;height:29px;border-top:1px solid #034579;border-bottom:1px solid #034579;background:#FFF}
+.tst{border:none;width:211px;height:26px;background:#fff;line-height:26px}
+.tst1{border:none;width:50px;height:26px;background:#fff;line-height:26px;overflow:hidden}
+.tr{float:left;width:26px;height:31px;background:url(../img/textrbk.gif)}
+.tr img{float:left}
+.btn{background:url(../img/login.gif);width:108px;height:34px;border:none}
+.wz{font-size:14px;font-family:΢���ź�;color:#fff}
+.jrp{background:url(../img/left.png) no-repeat center center; _background-image:none;_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='image', src="../img/left.png");width:396px;height:238px;}
+.jlp{background:url(../img/right.png) no-repeat center center; _background-image:none;_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled='true', sizingMethod='image', src="../img/right.png");}

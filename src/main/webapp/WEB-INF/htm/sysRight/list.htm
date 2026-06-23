@@ -1,0 +1,112 @@
+<#import "/WEB-INF/htm/common/enum.htm" as enum>
+<#import "/WEB-INF/htm/common/page.htm" as page>
+
+<form id="query_form">
+<table class="tb_query">
+	<tbody>
+			<tr>
+				<th>资源名(功能权限名)：</th>
+				<td>&nbsp;<input type="text" id="sysRight.name"/></td>
+			</tr>
+			<tr>
+				<th>资源状态：</th>
+				<td>&nbsp;<input type="text" id="sysRight.status"/></td>
+			</tr>
+			<tr>
+				<th>系统功能URL：</th>
+				<td>&nbsp;<input type="text" id="sysRight.url"/></td>
+			</tr>
+			<tr>
+				<th>操作类型编码，用于控制操作类型按钮的出现。
+有编码的记录必须唯一。：</th>
+				<td>&nbsp;<input type="text" id="sysRight.code"/></td>
+			</tr>
+
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="4" align="center">
+			<a class="bt_green" id="query_button" href="javascript:search()" >查 询</a>
+			<a class="bt_gray" href="javascript:void(0)"  onclick="$('#query_form')[0].reset()">重 置</a></td>
+		</tr>
+	</tfoot>
+</table>
+</form>
+
+<div class="separate_div"/>
+
+<table class="tblist f_tblist">
+	<caption>
+	系统操作资源表列表
+	<span class="operate_list"> 
+		<a class="bt_blue_30 f_add_operate" href="core/major/major-input.html">添加</a>
+		<a class="bt_blue_30 f_batch_delete" href="#">批量删除</a>
+	</span>
+	</caption>
+</table>
+	
+<div id="page.result">
+	<#include "data.htm">
+</div>
+		
+<@page.navigation/>
+
+<@page.init/>
+		
+
+			
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+//查询方法
+function search(){	
+	var map=new Map();	
+	map.put("sysRight.name","'"+document.getElementById("sysRight.name").value.trim()+"'");
+	map.put("sysRight.status","'"+document.getElementById("sysRight.status").value.trim()+"'");
+	map.put("sysRight.url","'"+document.getElementById("sysRight.url").value.trim()+"'");
+	map.put("sysRight.code","'"+document.getElementById("sysRight.code").value.trim()+"'");
+
+	paginatorSearch('${webroot}/sysRight!search.action',map);
+}
+
+$('.f_batch_delete').bind('click', function(event){
+	if(selectList.size()==0){
+		$(this).tip({content:"请选择要操作的数据"});
+		event.stopImmediatePropagation();
+		event.preventDefault();
+		$(document).triggerHandler("click");//仍向上冒泡传递事件，隐藏某些浮层
+	}		
+});
+$('.f_batch_delete').jConfirmAction({
+		question:"确定删除选中的 记录吗？",
+		yesAnswer:"是",cancelAnswer:"否",
+		yesAction:function($this){
+			jQueryPost("${webroot}/sysRight!batchRemove.action",{
+				"sysRight.ids":selectList.getData()
+				},
+				function(status,msg){
+					if(status==0){
+						search();	 
+						jAlertSuccess("删除系统操作资源表成功！");				
+					}else{
+						 
+						jAlertError("删除系统操作资源表失败！"+msg);
+					}
+			});	
+		}
+});
+
+
+//-->
+</SCRIPT>	
+
+
+
+
+
+
+
+
+
+
+

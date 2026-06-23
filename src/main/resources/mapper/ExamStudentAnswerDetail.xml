@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamStudentAnswerDetail">
+	
+	<resultMap id="result" type="ExamStudentAnswerDetail">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="studentAnswerId" column="STUDENT_ANSWER_ID" jdbcType="NUMERIC"/>
+		<result property="questionId" column="QUESTION_ID" jdbcType="NUMERIC"/>
+		<result property="answerContent" column="ANSWER_CONTENT" jdbcType="BLOB" typeHandler="BlobStringTypeHandler"/>
+		<result property="score" column="SCORE" jdbcType="NUMERIC"/>
+		<result property="reviewerId" column="REVIEWER_ID" jdbcType="NUMERIC"/>
+		<result property="reviewDate" column="REVIEW_DATE" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<insert id="insert" parameterType="ExamStudentAnswerDetail">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_STUDENT_ANSWER_DETAIL.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_STUDENT_ANSWER_DETAIL(
+				ID,
+				STUDENT_ANSWER_ID,
+				QUESTION_ID,
+				ANSWER_CONTENT,
+				SCORE
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{studentAnswerId,jdbcType=NUMERIC},
+				#{questionId,jdbcType=NUMERIC},
+				#{answerContent,jdbcType=BLOB},
+				#{score,jdbcType=NUMERIC}
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamStudentAnswerDetail">
+		<![CDATA[
+			UPDATE EXAM_STUDENT_ANSWER_DETAIL SET
+				STUDENT_ANSWER_ID=#{studentAnswerId,jdbcType=NUMERIC},
+				QUESTION_ID=#{questionId,jdbcType=NUMERIC},
+				ANSWER_CONTENT=#{answerContent,jdbcType=BLOB},
+				SCORE=#{score,jdbcType=NUMERIC},
+				REVIEWER_ID=#{reviewerId,jdbcType=NUMERIC},
+				REVIEW_DATE=SYSDATE
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_STUDENT_ANSWER_DETAIL WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_STUDENT_ANSWER_DETAIL
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamPaper"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_STUDENT_ANSWER_DETAIL
+			WHERE
+				1=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="studentAnswerId!=null" >
+			AND STUDENT_ANSWER_ID=#{studentAnswerId}
+		</if>
+		<if test="questionId!=null" >
+			AND QUESTION_ID=#{questionId}
+		</if>
+		<if test="answerContent!=null" >
+			AND ANSWER_CONTENT=#{answerContent}
+		</if>
+		<if test="score!=null" >
+			AND SCORE=#{score}
+		</if>
+		<if test="reviewerId!=null" >
+			AND REVIEWER_ID=#{reviewerId}
+		</if>
+		<if test="reviewDate!=null" >
+			AND REVIEW_DATE=#{reviewDate}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="getAnswerNumberByAnswerId" parameterType="java.util.List"  resultType="java.util.Map">
+			SELECT STUDENT_ANSWER_ID as SAID, COUNT(1) as ANUM
+			FROM 
+				EXAM_STUDENT_ANSWER_DETAIL
+			WHERE	
+				ANSWER_CONTENT IS NOT NULL
+				and STUDENT_ANSWER_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+		               	#{id}
+		        </foreach>
+		    GROUP BY STUDENT_ANSWER_ID
+	</select>
+	
+	<select id="getScoreByAnswerId" parameterType="java.util.List"  resultType="java.util.Map">
+			SELECT STUDENT_ANSWER_ID as SAID, SUM(SCORE) as ASCORE
+			FROM 
+				EXAM_STUDENT_ANSWER_DETAIL
+			WHERE	
+				SCORE IS NOT NULL
+				and STUDENT_ANSWER_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+		               	#{id}
+		        </foreach>
+		    GROUP BY STUDENT_ANSWER_ID
+	</select>
+	
+</mapper>
+
+
+

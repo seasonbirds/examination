@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ExamPolicyDetail">
+	
+	<resultMap id="result" type="ExamPolicyDetail">
+		<result property="id" column="ID" jdbcType="NUMERIC"/>
+		<result property="examPolicyId" column="EXAM_POLICY_ID" jdbcType="NUMERIC"/>
+		<result property="type" column="TYPE" jdbcType="VARCHAR"/>
+		<result property="lev" column="LEV" jdbcType="VARCHAR"/>
+		<result property="questionCount" column="QUESTION_COUNT" jdbcType="NUMERIC"/>
+		<result property="perScore" column="PER_SCORE" jdbcType="NUMERIC"/>
+		<result property="lastUpdateDate" column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdatedBy" column="LAST_UPDATED_BY" jdbcType="NUMERIC"/>
+		<result property="creationDate" column="CREATION_DATE" jdbcType="TIMESTAMP"/>
+		<result property="createdBy" column="CREATED_BY" jdbcType="NUMERIC"/>
+		<result property="enabledFlag" column="ENABLED_FLAG" jdbcType="NUMERIC"/>	
+	</resultMap>
+		
+	<insert id="insert" parameterType="ExamPolicyDetail">
+		<selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+	       SELECT EXAM.SEQ_EXAM_POLICY_DETAIL.nextval from dual  
+	    </selectKey>  	    
+	    <![CDATA[
+			INSERT INTO EXAM_POLICY_DETAIL(
+				ID,
+				EXAM_POLICY_ID,
+				TYPE,
+				LEV,
+				QUESTION_COUNT,
+				PER_SCORE,
+				LAST_UPDATE_DATE,
+				LAST_UPDATED_BY,
+				CREATION_DATE,
+				CREATED_BY,
+				ENABLED_FLAG
+			)VALUES(
+				#{id,jdbcType=NUMERIC},
+				#{examPolicyId,jdbcType=NUMERIC},
+				#{type,jdbcType=VARCHAR},
+				#{lev,jdbcType=VARCHAR},
+				#{questionCount,jdbcType=NUMERIC},
+				#{perScore,jdbcType=NUMERIC},
+				SYSDATE,
+				#{lastUpdatedBy,jdbcType=NUMERIC},
+				SYSDATE,
+				#{createdBy,jdbcType=NUMERIC},
+				1 
+			)
+	    ]]>
+	</insert>
+	
+	<update id="update" parameterType="ExamPolicyDetail">
+		<![CDATA[
+			UPDATE EXAM_POLICY_DETAIL SET 
+				ID=#id:NUMERIC#,
+				EXAM_POLICY_ID=#examPolicyId:NUMERIC#,
+				TYPE=#type:VARCHAR#,
+				LEV=#lev:VARCHAR#,
+				PER_SCORE=#perScore:NUMERIC#,
+				LAST_UPDATED_BY=#lastUpdatedBy:NUMERIC#,
+				CREATED_BY=#createdBy:NUMERIC#
+			WHERE
+				ID=#{id}
+		]]>
+	</update>
+	
+	<update id="deleteLogic" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_POLICY_DETAIL SET ENABLED_FLAG=0 WHERE ID=#{id} ]]>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		<![CDATA[DELETE FROM EXAM_POLICY_DETAIL WHERE ID=#{id} ]]>
+	</delete>
+	
+	<select id="selectOne" parameterType="java.lang.Integer" resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_POLICY_DETAIL
+			WHERE
+				ID=#{id}
+		]]>
+	</select>
+	
+	<select id="selectList" parameterType="ExamPolicyDetail"  resultMap="result">
+		<![CDATA[
+			SELECT *
+			FROM 
+				EXAM_POLICY_DETAIL
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="id!=null" >
+			AND ID=#{id}
+		</if>
+		<if test="examPolicyId!=null" >
+			AND EXAM_POLICY_ID=#{examPolicyId}
+		</if>
+		<if test="type!=null" >
+			AND upper(TYPE) like upper('%${type}%')
+		</if>
+		<if test="lev!=null" >
+			AND upper(LEV) like upper('%${lev}%')
+		</if>
+		<if test="questionCount!=null" >
+			AND QUESTION_COUNT=#{questionCount}
+		</if>
+		<if test="perScore!=null" >
+			AND PER_SCORE=#{perScore}
+		</if>
+		<if test="lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{lastUpdateDate}
+		</if>
+		<if test="lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{lastUpdatedBy}
+		</if>
+		<if test="creationDate!=null" >
+			AND CREATION_DATE=#{creationDate}
+		</if>
+		<if test="createdBy!=null" >
+			AND CREATED_BY=#{createdBy}
+		</if>
+		<if test="enabledFlag!=null" >
+			AND ENABLED_FLAG=#{enabledFlag}
+		</if>
+			ORDER BY ID
+	</select>
+	
+	<select id="selectPage" resultMap="result">
+		<![CDATA[
+			SELECT 
+				*
+			FROM 
+				EXAM_POLICY_DETAIL
+			WHERE
+				ENABLED_FLAG=1
+		]]>
+		<if test="bo.id!=null" >
+			AND ID=#{bo.id}
+		</if>
+		<if test="bo.examPolicyId!=null" >
+			AND EXAM_POLICY_ID=#{bo.examPolicyId}
+		</if>
+		<if test="bo.type!=null" >
+			AND upper(TYPE) like upper('%${bo.type}%')
+		</if>
+		<if test="bo.lev!=null" >
+			AND upper(LEV) like upper('%${bo.lev}%')
+		</if>
+		<if test="bo.questionCount!=null" >
+			AND QUESTION_COUNT=#{bo.questionCount}
+		</if>
+		<if test="bo.perScore!=null" >
+			AND PER_SCORE=#{bo.perScore}
+		</if>
+		<if test="bo.lastUpdateDate!=null" >
+			AND LAST_UPDATE_DATE=#{bo.lastUpdateDate}
+		</if>
+		<if test="bo.lastUpdatedBy!=null" >
+			AND LAST_UPDATED_BY=#{bo.lastUpdatedBy}
+		</if>
+		<if test="bo.creationDate!=null" >
+			AND CREATION_DATE=#{bo.creationDate}
+		</if>
+		<if test="bo.createdBy!=null" >
+			AND CREATED_BY=#{bo.createdBy}
+		</if>
+		<if test="bo.enabledFlag!=null" >
+			AND ENABLED_FLAG=#{bo.enabledFlag}
+		</if>
+			ORDER BY ${page.sortFieldName} <if test="page.sortDesc==true">DESC</if>
+	</select>
+	
+	<delete id="deleteByPolicyId" parameterType="java.lang.Integer">
+		<![CDATA[UPDATE EXAM_POLICY_DETAIL SET ENABLED_FLAG=0 WHERE EXAM_POLICY_ID=#{policyId} ]]>
+	</delete>
+	
+	<select id="getQuestionNumberByPolicys" parameterType="java.util.List"  resultType="java.util.Map">
+			SELECT EXAM_POLICY_ID as EPID, SUM(QUESTION_COUNT) as QNUM
+			FROM 
+				EXAM_POLICY_DETAIL
+			WHERE	
+				ENABLED_FLAG=1
+				and EXAM_POLICY_ID IN
+				<foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+		               	#{id}
+		        </foreach>
+		    GROUP BY EXAM_POLICY_ID
+	</select>
+</mapper>
+
+
+

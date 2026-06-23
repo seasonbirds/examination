@@ -1,0 +1,42 @@
+<#import "/WEB-INF/htm/common/page.htm" as page>
+<@page.info/>
+<table class="tblist f_tblist">
+	<thead>
+		<tr>
+			<th><input type="checkbox" id="checkboxAll" value="0" onclick="selectForAll(this)"/></th>
+			<th>序号</th>
+			<th>&nbsp;名称</th>
+			<th>&nbsp;父节点ID</th>
+			<th>&nbsp;描述</th>
+			<th>&nbsp;状态</th>
+			<th>&nbsp;创建人</th>
+			<th>&nbsp;创建时间</th>
+
+			<th>查看</th>
+			<th>编辑</th>
+			<th>删除</th>			
+		</tr>
+	</thead>
+	<tbody>
+		<#list paginator.resultList as item>
+		<tr <#if item_index%2==1>class="even"</#if>>
+			<td>&nbsp;<input name="checkbox${item.id}"  value="${item.id?c!0}" type="checkbox" onclick="selectOne(this)"/></td>
+			<td>&nbsp;${paginator.startRowNum+item_index+1}</td>
+			<td>&nbsp;<#if item.name??>${item.name}</#if></td>
+			<td>&nbsp;<#if item.parentId??>${item.parentId?c!0}</#if></td>
+			<td>&nbsp;<#if item.description??>${item.description}</#if></td>
+			<td>&nbsp;<#if item.status??>${resourceBundle("Enabled."+item.status)}</#if></td>
+			<td>&nbsp;<#if item.createdBy??>${item.createdBy?c!0}</#if></td>
+			<td>&nbsp;<#if item.creationDate??>${item.creationDate?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
+
+			<td><a class="f_tblist_show"  href="${webroot}/sysRole!show.action?sysRole.id=${item.id?c!0}"><img src="${webroot}/img/crud/magnifier.png" alt="查看"/></a></td>
+			<td><a class="f_tblist_edit"  href="${webroot}/sysRole!toCreateOrUpdate.action?sysRole.id=${item.id?c!0}"><img src="${webroot}/img/crud/user_edit.png" alt="编辑"/></a></td>
+			<td><a class="f_single_delete" href="${webroot}/sysRole!remove.action?sysRole.id=${item.id?c!0}"><img src="${webroot}/img/crud/trash.png" alt="删除"/></a></td>			
+		</tr>
+		</#list>	
+		<@page.blank cellCount="11"/>
+	</tbody>	
+</table>
+
+
+
